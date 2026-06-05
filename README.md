@@ -1,47 +1,47 @@
-# MRT-Atlas Trainer 🧠🔬
+# MRI-Atlas Trainer 🧠🔬
 
-Ein interaktives Web-Tool für Neurowissenschaften- und Medizinstudierende, um die strukturelle Anatomie des menschlichen Gehirns spielerisch und hocheffizient zu erlernen. 
+An interactive web-based educational game designed for neuroscience and medical students to learn human brain anatomy efficiently and intuitively.
 
-👉 **[Hier direkt im Browser spielen!](https://mendeltem.github.io/mrt-atlas-trainer/)**
+👉 **[Play directly in your browser here!](https://mendeltem.github.io/mrt-atlas-trainer/)**
 
 ---
 
 ## 🚀 Features
 
-* **Interaktiver MRT-Schnittbild-Viewer:** Nahtloses Blättere durch die verschiedenen Gehirnschichten (Schichten 1–32) mithilfe von Schiebereglern, dem Mausrad oder den Pfeiltasten (wie in `grafik_2.jpg` zu sehen).
-* **AAL-Atlas Overlay:** Ein präzises, farbiges Overlay im MNI-Standardraum visualisiert die exakten anatomischen Regionen (Automated Anatomical Labeling).
-* **Zwei interaktive Modi:**
-  * **Erkunden:** Klicke auf eine beliebige Stelle im Schnittbild, um sofort den exakten Regionsnamen (Deutsch + AAL) und dessen Funktion zu sehen. Mit dem "Atlas"-Regler lässt sich die Farbe stufenlos ein- und ausblenden, um die darunterliegende T1-Struktur zu analysieren.
-  * **Training:** Teste dein Wissen! Das Tool fordert dich auf, bestimmte Gehirnregionen selbstständig zu finden und anzuklicken.
+* **Interactive MRI Slice Viewer:** Seamlessly navigate through 32 distinct anatomical brain slices using the slider, your mouse scroll wheel, or arrow keys (as seen in `grafik_2.jpg`).
+* **AAL-Atlas Overlay:** A precise, color-coded overlay in MNI standard space visualizes exact anatomical regions based on the Automated Anatomical Labeling (AAL) atlas.
+* **Two Learning Modes:**
+  * **Explore Mode:** Click anywhere on the brain slice to instantly reveal the exact region name (German + AAL classification) and its primary neurological function. Use the "Atlas" slider to adjust transparency dynamically, allowing you to study the underlying T1 structural boundaries.
+  * **Training Mode:** Test your knowledge! The application prompts you to locate and click on specific brain structures across different slices.
 
 ---
 
-## 🛠️ Technische Umsetzung & Pipeline
+## 🛠️ Technical Implementation & Pipeline
 
-Das Projekt ist so optimiert, dass es vollständig clientseitig im Browser läuft – ohne Datenbanken oder schwere Server-Infrastruktur:
+The project is highly optimized to run entirely client-side in the browser, requiring zero server-side infrastructure or database calls:
 
-1. **Python-Preprocessing:** Die zugrundeliegenden 3D-MRT-Daten (MNI152 T1) und die dazugehörigen Atlas-Labels wurden vorab in Python verarbeitet und in hochoptimierte, verlustfreie 2D-Bildschichten exportiert.
-2. **Pixel-perfekte Klick-Erkennung:** Die Zuordnung der Mausklicks zu den anatomischen Regionen erfolgt über eine im Hintergrund geladene, unsichtbare Farb-Label-Karte. Jeder Pixel-Farbwert korrespondiert dabei exakt mit einer AAL-ID.
-3. **Web-Stack:** Reines HTML5, CSS3 (Dunkelmodus für augenschonendes Lernen) und natives JavaScript für die UI-Steuerung.
-
----
-
-## 🔬 Wissenschaftlicher Hintergrund & Validierung
-
-Dieses Tool wurde im Kontext neuroimaging-basierter Forschung entwickelt. Die zugrundeliegende Bildpipeline und die Segmentierungsgenauigkeit basieren auf methodischen Validierungen, die unter anderem an einem Datensatz von **94 Patienten** evaluiert wurden. Der Fokus liegt hierbei auf der präzisen anatomischen Zuordnung im standardisierten MNI-Raum, um eine Brücke zwischen theoretischer Neuroanatomie und praktischer MRT-Auswertung zu schlagen.
+1. **Python Preprocessing:** The underlying 3D MRI data (MNI152 T1 template) and corresponding atlas labels were preprocessed in Python and exported into highly optimized, lossless 2D image slices.
+2. **Pixel-Perfect Click Detection:** To match mouse clicks to anatomical regions, a hidden color-label map is loaded in the background. Each individual pixel color value maps directly to a specific unique AAL identifier.
+3. **Web Stack:** Pure HTML5, CSS3 (featuring a dark mode layout tailored for comfortable, long-term studying), and native JavaScript for responsive UI control.
 
 ---
 
-## 📖 Effektive Lernstrategie (Empfehlung für Studierende)
+## 🔬 Scientific Background & Validation
 
-Für den maximalen Lernerfolg empfehlen wir folgendes Vorgehen:
-
-1. **Visuelle Orientierung:** Nutze zuerst den **Erkunden-Modus**. Fahre mit der Maus über markante Strukturen (z. B. den Thalamus oder Nucleus caudatus in Schicht 17) und präge dir die anatomischen Nachbarschaften ein.
-2. **Strukturen isolieren:** Nutze den **Atlas-Regler**, um das farbige Overlay langsam auszublenden. Versuche, die Grenzen der Regionen allein anhand der Graustufen des T1-Bildes zu erkennen.
-3. **Selbsteinschätzung:** Wechsle in den **Training-Modus** und versuche, die abgefragten Regionen ohne Hilfsmittel in verschiedenen Schichten zu finden.
+This tool was developed within the context of neuroimaging research. The underlying imaging pipeline, alignment, and segmentation accuracy are based on methodological evaluations validated on a cohort dataset of **94 patients**. The core focus is providing precise anatomical mapping within the standardized MNI space, effectively bridging the gap between theoretical neuroanatomy and practical MRI evaluation.
 
 ---
 
-## 🤝 Feedback & Mitwirken
+## 📖 Recommended Study Strategy for Students
 
-Wenn du Fehler in den Regionsbezeichnungen findest, Feedback zur Usability hast oder neue Features vorschlagen möchtest, öffne gerne ein **Issue** oder erstelle einen **Pull Request**!
+For optimal retention and learning efficiency, we recommend following these steps:
+
+1. **Visual Orientation:** Start in **Explore Mode**. Move your cursor over prominent structures (such as the thalamus or caudate nucleus visible in slice 17) to familiarize yourself with anatomical boundaries and adjacencies.
+2. **Isolate Structures:** Use the **Atlas slider** to slowly fade out the color-coded map. Try to identify and delineate the structural borders relying purely on the grayscale T1-weighted contrast.
+3. **Self-Assessment:** Switch to **Training Mode** and attempt to locate the requested structures without any visual assistance across different slices.
+
+---
+
+## 🤝 Feedback & Contributions
+
+If you spot any discrepancies in region labeling, have usability feedback, or would like to suggest new features, feel free to open an **Issue** or submit a **Pull Request**!
