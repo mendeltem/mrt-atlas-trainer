@@ -47,6 +47,6 @@ It's a single static file — just serve `index.html` on any static host
 
 **Uchralt Temuulen** · Data Scientist, Charité – Universitätsmedizin Berlin
 
-LinkedIn: https://www.linkedin.com/in/YOUR-PROFILE/
+LinkedIn: www.linkedin.com/in/uchralt-temuulen-31a3a570
 
 Feedback and suggestions are welcome!
