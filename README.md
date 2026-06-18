@@ -4,6 +4,8 @@ A free, interactive tool for learning **neuroanatomy** — explore real MRI slic
 
 **Live demo:** https://mendeltem.github.io/mrt-atlas-trainer/
 
+![MRI Atlas Trainer – quiz mode showing an axial MNI152 slice (AAL atlas, slice 17/32, z = 13 mm) with colored region overlays. A crosshair marks one structure and the side panel asks which region it highlights, offering multiple-choice answers, with a running right/wrong/remaining score.](mri_train_1.png)
+
 ---
 
 ## What is it?
