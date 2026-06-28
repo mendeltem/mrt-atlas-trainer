@@ -57,6 +57,14 @@
   #expInfo{color:var(--muted);font-size:14px;line-height:1.5;margin-top:10px}
   .hint{font-size:13px;color:var(--muted);line-height:1.55}.hint b{color:var(--ink)}
 
+  #qSettings{margin-bottom:9px;display:flex;flex-direction:column;gap:7px}
+  .qset-row{display:flex;align-items:center;gap:8px}
+  .qset-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);width:76px;flex-shrink:0}
+  .qset-row .seg{flex:1;border-radius:9px}
+  .qset-row .seg button{flex:1;padding:7px 4px;font-size:11px}
+  .qset-row .seg button:disabled{opacity:.32;cursor:default;color:var(--muted)}
+  body.mobile .qset-lbl{width:64px;font-size:8.5px}
+  body.mobile .qset-row .seg button{font-size:10px;padding:7px 3px}
   .qprompt{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
   #qInstr{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;margin-top:6px;color:var(--accent)}
   .opts{display:flex;flex-direction:column;gap:8px;margin-top:6px}
@@ -66,6 +74,22 @@
   .opt.correct{background:rgba(82,210,126,.16);border-color:var(--ok);color:var(--ok)}
   .opt.wrong{background:rgba(239,93,101,.14);border-color:var(--bad);color:var(--bad)}
   #qFeedback{font-family:'JetBrains Mono',monospace;font-size:13px;min-height:16px;margin-top:10px}
+  #qExplain{margin-top:9px;padding:10px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);
+    border-left:3px solid var(--accent2);font-family:'Newsreader',serif;font-size:13.5px;line-height:1.5;color:var(--ink);
+    animation:fadein .25s ease}
+  #qExplain b{font-family:'Bricolage Grotesque',sans-serif;color:var(--accent2)}
+  .qdiag{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;color:var(--accent);
+    margin:-2px 0 9px;padding-bottom:9px;border-bottom:1px dashed var(--line)}
+  .qdiag b{color:var(--accent);font-family:inherit}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .qactions{display:flex;gap:8px;margin-top:10px}
+  .qactions .btn{margin:0}
+  #qHint{font-size:12px;padding:8px 12px}
+  #qHint:disabled{opacity:.45;cursor:default;border-color:var(--line);color:var(--muted)}
+  #qNext{flex:1}
+  .stat.streak b{color:var(--accent)}
+  .stat.streak.pulse{animation:streakpulse .5s ease}
+  @keyframes streakpulse{0%{transform:scale(1)}40%{transform:scale(1.14);box-shadow:0 0 14px rgba(240,168,48,.5)}100%{transform:scale(1)}}
   .stats{display:flex;gap:8px}
   .stat{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:9px 4px;background:var(--panel)}
   .stat b{display:block;font-family:'JetBrains Mono',monospace;font-size:20px}
@@ -117,9 +141,14 @@
     <button data-mode="explore" class="on" data-i18n="m_explore">Erkunden</button>
     <button data-mode="quiz" data-i18n="m_quiz">Quiz</button>
   </div>
+  <div class="seg" id="levelSeg">
+    <button data-level="easy" class="on" data-i18n="lv_easy">Einfach</button>
+    <button data-level="med" data-i18n="lv_med">Mittel</button>
+    <button data-level="hard" data-i18n="lv_hard">Schwer</button>
+  </div>
   <div class="seg" id="langSeg">
-    <button data-l="de" class="on">DE</button>
-    <button data-l="en">EN</button>
+    <button data-l="de">DE</button>
+    <button data-l="en" class="on">EN</button>
   </div>
 </header>
 
@@ -156,20 +185,48 @@
     </div>
 
     <div id="quizPanel" class="hidden">
-      <div class="seg" id="qTypeSeg" style="margin-bottom:2px">
-        <button data-t="erkennen" class="on" data-i18n="q_identify">Erkennen</button>
-        <button data-t="funktion" data-i18n="q_function">Funktion</button>
+      <div id="qSettings">
+        <div class="qset-row"><span class="qset-lbl" data-i18n="qs_type">Frageart</span>
+          <div class="seg" id="qModeSeg">
+            <button data-m="anatomy" data-i18n="qs_anatomy">Anatomie</button>
+            <button data-m="funktion" data-i18n="qs_function">Funktion</button>
+            <button data-m="mixed" data-i18n="qs_mixed">Gemischt</button>
+          </div></div>
+        <div class="qset-row"><span class="qset-lbl" data-i18n="qs_diff">Schwierigkeit</span>
+          <div class="seg" id="qDiffSeg">
+            <button data-d="easy" data-i18n="lv_easy">Einfach</button>
+            <button data-d="med" data-i18n="lv_med">Mittel</button>
+            <button data-d="hard" data-i18n="lv_hard">Schwer</button>
+          </div></div>
+        <div class="qset-row"><span class="qset-lbl" data-i18n="qs_count">Anzahl</span>
+          <div class="seg" id="qCountSeg">
+            <button data-c="auto" data-i18n="qs_auto">Auto</button>
+            <button data-c="10">10</button>
+            <button data-c="15">15</button>
+            <button data-c="20">20</button>
+          </div></div>
+        <div class="qset-row"><span class="qset-lbl" data-i18n="qs_help">Lösungshilfe</span>
+          <div class="seg" id="qHelpSeg">
+            <button data-h="1" data-i18n="qs_help_on">Tipps an</button>
+            <button data-h="0" data-i18n="qs_help_off">Ohne</button>
+          </div></div>
       </div>
       <div class="card">
         <div class="qprompt" id="qPrompt">Markierte Struktur:</div>
         <div id="qInstr">—</div>
         <div class="opts" id="qOpts"></div>
         <div id="qFeedback"></div>
+        <div id="qExplain" class="hidden"></div>
+        <div class="qactions">
+          <button id="qHint" class="btn">💡 Tipp</button>
+          <button id="qNext" class="btn primary hidden" data-i18n="q_next">Weiter →</button>
+        </div>
       </div>
       <div class="stats">
-        <div class="stat ok"><b id="sCorrect">0</b><span data-i18n="s_correct">Richtig</span></div>
-        <div class="stat bad"><b id="sWrong">0</b><span data-i18n="s_wrong">Falsch</span></div>
+        <div class="stat ok"><b id="sCorrect">0</b><span data-i18n="s_correct">Gemeistert</span></div>
+        <div class="stat bad"><b id="sWrong">0</b><span data-i18n="s_wrong">Fehler</span></div>
         <div class="stat"><b id="sLeft">0</b><span data-i18n="s_left">Übrig</span></div>
+        <div class="stat streak" id="streakStat"><b id="sStreak">0</b><span data-i18n="s_streak">Serie 🔥</span></div>
       </div>
       <div class="bar"><i id="qBar"></i></div>
       <button class="btn" id="qRestart" data-i18n="q_restart">Quiz neu starten</button>
@@ -183,7 +240,11 @@
   </aside>
 </main>
 
-<footer id="footer">Daten: MNI152 (T1) + AAL-Atlas, in Python zu Bildern gerendert. Klick-Erkennung über verlustfreie Label-Karte.</footer>
+<footer id="footer">Daten: MNI152 (T1) + AAL-Atlas, in Python zu Bildern gerendert. Klick-Erkennung über verlustfreie Label-Karte.<br>
+<b>Didaktik &middot; Quellen je Stufe.</b>
+<b>Einfach</b> (Schul-/Grundlagenbiologie, nur Lappen + Großstrukturen): Rahmenlehrplan gymnasiale Oberstufe Biologie, LISUM Berlin-Brandenburg (2021); Campbell Biologie (Pearson).
+<b>Mittel</b> (benannte Regionen/Gyri, L/R zusammengefasst): Pinel, Barnes, Pauli &amp; Gamer, Biopsychologie, 11.&nbsp;Aufl. (Pearson 2024, ISBN 978-3-86894-442-6).
+<b>Schwer</b> (fein lateralisierte Areale, klinische Neuropsychologie): Karnath &amp; Thier (Hrsg.), Kognitive Neurowissenschaften, 3.&nbsp;Aufl. (Springer 2012, ISBN 978-3-642-25526-7); Hartje &amp; Poeck, Klinische Neuropsychologie, 6.&nbsp;Aufl. (Thieme 2006).</footer>
 
 <script>
 const META = {"aal": {"cols": 8, "cellW": 142, "cellH": 170, "n": 32, "sliceMM": [-58.0, -54.0, -49.0, -45.0, -40.0, -36.0, -31.0, -27.0, -23.0, -18.0, -14.0, -9.0, -5.0, -1.0, 4.0, 8.0, 13.0, 17.0, 22.0, 26.0, 30.0, 35.0, 39.0, 44.0, 48.0, 52.0, 57.0, 61.0, 66.0, 70.0, 75.0, 79.0], "rep": [null, {"s": 27, "col": 97, "row": 82}, {"s": 24, "col": 36, "row": 74}, {"s": 22, "col": 85, "row": 38}, {"s": 27, "col": 53, "row": 65}, {"s": 8, "col": 81, "row": 43}, {"s": 10, "col": 57, "row": 36}, {"s": 21, "col": 98, "row": 46}, {"s": 22, "col": 43, "row": 49}, {"s": 11, "col": 95, "row": 29}, {"s": 10, "col": 46, "row": 31}, {"s": 16, "col": 110, "row": 62}, {"s": 20, "col": 35, "row": 61}, {"s": 15, "col": 107, "row": 46}, {"s": 19, "col": 36, "row": 51}, {"s": 11, "col": 102, "row": 46}, {"s": 11, "col": 37, "row": 44}, {"s": 17, "col": 103, "row": 82}, {"s": 16, "col": 28, "row": 74}, {"s": 28, "col": 77, "row": 67}, {"s": 26, "col": 65, "row": 72}, {"s": 10, "col": 81, "row": 62}, {"s": 10, "col": 60, "row": 60}, {"s": 23, "col": 74, "row": 43}, {"s": 23, "col": 65, "row": 40}, {"s": 11, "col": 75, "row": 30}, {"s": 11, "col": 65, "row": 33}, {"s": 10, "col": 76, "row": 41}, {"s": 10, "col": 64, "row": 42}, {"s": 15, "col": 99, "row": 65}, {"s": 14, "col": 40, "row": 66}, {"s": 20, "col": 75, "row": 54}, {"s": 19, "col": 65, "row": 47}, {"s": 21, "col": 75, "row": 78}, {"s": 21, "col": 65, "row": 76}, {"s": 20, "col": 74, "row": 105}, {"s": 20, "col": 65, "row": 105}, {"s": 10, "col": 91, "row": 82}, {"s": 10, "col": 48, "row": 82}, {"s": 7, "col": 88, "row": 77}, {"s": 8, "col": 52, "row": 79}, {"s": 10, "col": 89, "row": 72}, {"s": 10, "col": 52, "row": 71}, {"s": 15, "col": 79, "row": 127}, {"s": 16, "col": 59, "row": 125}, {"s": 19, "col": 76, "row": 131}, {"s": 18, "col": 61, "row": 129}, {"s": 13, "col": 83, "row": 119}, {"s": 13, "col": 59, "row": 119}, {"s": 19, "col": 86, "row": 134}, {"s": 20, "col": 53, "row": 135}, {"s": 14, "col": 97, "row": 137}, {"s": 19, "col": 40, "row": 130}, {"s": 11, "col": 97, "row": 135}, {"s": 11, "col": 42, "row": 135}, {"s": 10, "col": 96, "row": 115}, {"s": 10, "col": 47, "row": 114}, {"s": 26, "col": 101, "row": 94}, {"s": 27, "col": 45, "row": 97}, {"s": 26, "col": 92, "row": 118}, {"s": 27, "col": 47, "row": 115}, {"s": 23, "col": 104, "row": 109}, {"s": 25, "col": 36, "row": 106}, {"s": 19, "col": 114, "row": 100}, {"s": 19, "col": 25, "row": 95}, {"s": 21, "col": 105, "row": 116}, {"s": 21, "col": 32, "row": 117}, {"s": 26, "col": 77, "row": 114}, {"s": 24, "col": 63, "row": 118}, {"s": 28, "col": 78, "row": 90}, {"s": 29, "col": 67, "row": 96}, {"s": 18, "col": 83, "row": 74}, {"s": 18, "col": 57, "row": 72}, {"s": 12, "col": 90, "row": 67}, {"s": 13, "col": 49, "row": 66}, {"s": 13, "col": 85, "row": 71}, {"s": 13, "col": 55, "row": 71}, {"s": 15, "col": 80, "row": 86}, {"s": 15, "col": 62, "row": 86}, {"s": 15, "col": 104, "row": 86}, {"s": 15, "col": 32, "row": 81}, {"s": 16, "col": 114, "row": 95}, {"s": 14, "col": 26, "row": 84}, {"s": 9, "col": 104, "row": 61}, {"s": 8, "col": 40, "row": 59}, {"s": 13, "col": 116, "row": 101}, {"s": 13, "col": 26, "row": 108}, {"s": 5, "col": 96, "row": 60}, {"s": 5, "col": 43, "row": 60}, {"s": 7, "col": 110, "row": 90}, {"s": 8, "col": 27, "row": 99}, {"s": 6, "col": 100, "row": 123}, {"s": 6, "col": 41, "row": 123}, {"s": 4, "col": 97, "row": 127}, {"s": 4, "col": 43, "row": 124}, {"s": 9, "col": 77, "row": 100}, {"s": 8, "col": 60, "row": 97}, {"s": 9, "col": 82, "row": 107}, {"s": 8, "col": 55, "row": 103}, {"s": 8, "col": 90, "row": 118}, {"s": 8, "col": 51, "row": 119}, {"s": 4, "col": 85, "row": 125}, {"s": 2, "col": 46, "row": 125}, {"s": 2, "col": 92, "row": 114}, {"s": 1, "col": 50, "row": 115}, {"s": 3, "col": 80, "row": 109}, {"s": 3, "col": 62, "row": 110}, {"s": 4, "col": 87, "row": 100}, {"s": 4, "col": 51, "row": 100}, {"s": 8, "col": 70, "row": 104}, {"s": 11, "col": 69, "row": 102}, {"s": 13, "col": 70, "row": 112}, {"s": 9, "col": 70, "row": 123}, {"s": 7, "col": 69, "row": 126}, {"s": 5, "col": 70, "row": 123}, {"s": 5, "col": 69, "row": 114}, {"s": 6, "col": 70, "row": 107}], "labels": ["Air", "Precentral_L", "Precentral_R", "Frontal_Sup_L", "Frontal_Sup_R", "Frontal_Sup_Orb_L", "Frontal_Sup_Orb_R", "Frontal_Mid_L", "Frontal_Mid_R", "Frontal_Mid_Orb_L", "Frontal_Mid_Orb_R", "Frontal_Inf_Oper_L", "Frontal_Inf_Oper_R", "Frontal_Inf_Tri_L", "Frontal_Inf_Tri_R", "Frontal_Inf_Orb_L", "Frontal_Inf_Orb_R", "Rolandic_Oper_L", "Rolandic_Oper_R", "Supp_Motor_Area_L", "Supp_Motor_Area_R", "Olfactory_L", "Olfactory_R", "Frontal_Sup_Medial_L", "Frontal_Sup_Medial_R", "Frontal_Med_Orb_L", "Frontal_Med_Orb_R", "Rectus_L", "Rectus_R", "Insula_L", "Insula_R", "Cingulum_Ant_L", "Cingulum_Ant_R", "Cingulum_Mid_L", "Cingulum_Mid_R", "Cingulum_Post_L", "Cingulum_Post_R", "Hippocampus_L", "Hippocampus_R", "ParaHippocampal_L", "ParaHippocampal_R", "Amygdala_L", "Amygdala_R", "Calcarine_L", "Calcarine_R", "Cuneus_L", "Cuneus_R", "Lingual_L", "Lingual_R", "Occipital_Sup_L", "Occipital_Sup_R", "Occipital_Mid_L", "Occipital_Mid_R", "Occipital_Inf_L", "Occipital_Inf_R", "Fusiform_L", "Fusiform_R", "Postcentral_L", "Postcentral_R", "Parietal_Sup_L", "Parietal_Sup_R", "Parietal_Inf_L", "Parietal_Inf_R", "SupraMarginal_L", "SupraMarginal_R", "Angular_L", "Angular_R", "Precuneus_L", "Precuneus_R", "Paracentral_Lobule_L", "Paracentral_Lobule_R", "Caudate_L", "Caudate_R", "Putamen_L", "Putamen_R", "Pallidum_L", "Pallidum_R", "Thalamus_L", "Thalamus_R", "Heschl_L", "Heschl_R", "Temporal_Sup_L", "Temporal_Sup_R", "Temporal_Pole_Sup_L", "Temporal_Pole_Sup_R", "Temporal_Mid_L", "Temporal_Mid_R", "Temporal_Pole_Mid_L", "Temporal_Pole_Mid_R", "Temporal_Inf_L", "Temporal_Inf_R", "Cerebelum_Crus1_L", "Cerebelum_Crus1_R", "Cerebelum_Crus2_L", "Cerebelum_Crus2_R", "Cerebelum_3_L", "Cerebelum_3_R", "Cerebelum_4_5_L", "Cerebelum_4_5_R", "Cerebelum_6_L", "Cerebelum_6_R", "Cerebelum_7b_L", "Cerebelum_7b_R", "Cerebelum_8_L", "Cerebelum_8_R", "Cerebelum_9_L", "Cerebelum_9_R", "Cerebelum_10_L", "Cerebelum_10_R", "Vermis_1_2", "Vermis_3", "Vermis_4_5", "Vermis_6", "Vermis_7", "Vermis_8", "Vermis_9", "Vermis_10"], "R": [0, 71, 33, 192, 32, 195, 208, 173, 233, 202, 25, 210, 145, 89, 87, 245, 246, 38, 3, 25, 57, 167, 245, 86, 227, 208, 81, 64, 90, 199, 140, 48, 212, 180, 70, 120, 9, 192, 245, 177, 65, 157, 9, 193, 100, 181, 125, 145, 62, 8, 108, 36, 140, 237, 242, 248, 161, 189, 41, 114, 65, 121, 97, 50, 238, 149, 44, 214, 124, 167, 40, 167, 127, 178, 231, 30, 173, 244, 193, 203, 204, 238, 139, 135, 71, 234, 234, 217, 66, 14, 129, 19, 97, 165, 112, 244, 35, 73, 192, 12, 149, 71, 33, 192, 32, 195, 208, 173, 233, 202, 25, 210, 145, 89, 87, 245, 246], "G": [0, 46, 78, 199, 79, 89, 41, 208, 135, 20, 154, 35, 21, 43, 230, 113, 191, 147, 208, 37, 28, 27, 86, 203, 25, 209, 148, 187, 139, 111, 48, 102, 76, 110, 106, 130, 37, 160, 34, 222, 90, 165, 245, 222, 102, 47, 19, 130, 4, 232, 137, 211, 240, 11, 140, 21, 42, 22, 241, 61, 99, 115, 199, 166, 114, 190, 204, 60, 233, 66, 115, 230, 125, 103, 203, 125, 13, 176, 94, 131, 39, 198, 167, 124, 67, 175, 254, 1, 15, 198, 62, 237, 159, 31, 218, 58, 244, 47, 61, 67, 94, 46, 78, 199, 79, 89, 41, 208, 135, 20, 154, 35, 21, 43, 230, 113, 191], "B": [0, 154, 43, 10, 207, 204, 164, 231, 136, 58, 239, 30, 147, 230, 101, 111, 150, 35, 128, 57, 252, 79, 173, 120, 25, 126, 81, 85, 8, 7, 122, 237, 190, 152, 246, 182, 130, 219, 67, 76, 167, 178, 235, 250, 28, 61, 186, 250, 199, 67, 58, 50, 86, 182, 108, 77, 89, 112, 59, 125, 226, 50, 205, 227, 125, 128, 104, 27, 59, 66, 53, 133, 159, 203, 97, 125, 139, 159, 158, 7, 215, 47, 140, 226, 223, 231, 44, 110, 184, 61, 233, 47, 67, 148, 22, 120, 173, 156, 117, 181, 94, 154, 43, 10, 207, 204, 164, 231, 136, 58, 239, 30, 147, 230, 101, 111, 150]}, "ho": {"cols": 8, "cellW": 142, "cellH": 170, "n": 32, "sliceMM": [-48.0, -44.0, -40.0, -36.0, -32.0, -28.0, -24.0, -20.0, -16.0, -12.0, -8.0, -4.0, 0.0, 4.0, 8.0, 12.0, 18.0, 22.0, 26.0, 30.0, 34.0, 38.0, 42.0, 46.0, 50.0, 54.0, 58.0, 62.0, 66.0, 70.0, 74.0, 78.0], "rep": [null, {"s": 9, "col": 69, "row": 30}, {"s": 11, "col": 100, "row": 67}, {"s": 27, "col": 70, "row": 60}, {"s": 21, "col": 101, "row": 53}, {"s": 13, "col": 30, "row": 49}, {"s": 17, "col": 109, "row": 58}, {"s": 27, "col": 46, "row": 83}, {"s": 3, "col": 99, "row": 61}, {"s": 10, "col": 115, "row": 73}, {"s": 12, "col": 24, "row": 89}, {"s": 6, "col": 115, "row": 74}, {"s": 9, "col": 118, "row": 91}, {"s": 13, "col": 26, "row": 109}, {"s": 2, "col": 108, "row": 74}, {"s": 5, "col": 112, "row": 92}, {"s": 8, "col": 27, "row": 109}, {"s": 27, "col": 72, "row": 96}, {"s": 27, "col": 93, "row": 109}, {"s": 21, "col": 112, "row": 97}, {"s": 22, "col": 31, "row": 102}, {"s": 16, "col": 28, "row": 111}, {"s": 22, "col": 94, "row": 127}, {"s": 12, "col": 105, "row": 130}, {"s": 14, "col": 69, "row": 127}, {"s": 7, "col": 69, "row": 37}, {"s": 24, "col": 70, "row": 73}, {"s": 8, "col": 70, "row": 55}, {"s": 21, "col": 70, "row": 51}, {"s": 19, "col": 70, "row": 63}, {"s": 21, "col": 70, "row": 95}, {"s": 22, "col": 69, "row": 118}, {"s": 17, "col": 69, "row": 131}, {"s": 8, "col": 94, "row": 52}, {"s": 4, "col": 52, "row": 77}, {"s": 8, "col": 52, "row": 95}, {"s": 11, "col": 70, "row": 120}, {"s": 1, "col": 94, "row": 74}, {"s": 6, "col": 99, "row": 95}, {"s": 8, "col": 44, "row": 110}, {"s": 8, "col": 91, "row": 130}, {"s": 13, "col": 102, "row": 56}, {"s": 15, "col": 109, "row": 78}, {"s": 17, "col": 108, "row": 96}, {"s": 11, "col": 33, "row": 75}, {"s": 14, "col": 106, "row": 87}, {"s": 15, "col": 110, "row": 95}, {"s": 16, "col": 69, "row": 128}, {"s": 13, "col": 69, "row": 146}, {"s": 13, "col": 78, "row": 86}, {"s": 13, "col": 62, "row": 85}, {"s": 14, "col": 80, "row": 61}, {"s": 14, "col": 61, "row": 60}, {"s": 11, "col": 90, "row": 69}, {"s": 11, "col": 51, "row": 68}, {"s": 11, "col": 86, "row": 75}, {"s": 11, "col": 55, "row": 74}, {"s": 7, "col": 89, "row": 82}, {"s": 7, "col": 51, "row": 81}, {"s": 8, "col": 88, "row": 75}, {"s": 8, "col": 53, "row": 74}, {"s": 10, "col": 78, "row": 61}, {"s": 10, "col": 63, "row": 62}, {"s": 4, "col": 70, "row": 92}], "R": [0, 109, 186, 242, 109, 242, 142, 114, 242, 109, 231, 214, 109, 242, 109, 159, 242, 109, 242, 169, 109, 242, 109, 203, 241, 109, 242, 125, 131, 242, 109, 242, 197, 109, 242, 109, 176, 242, 109, 242, 152, 109, 242, 109, 220, 224, 109, 242, 109, 123, 242, 72, 242, 163, 72, 242, 72, 179, 242, 72, 242, 106, 88, 242], "G": [0, 147, 242, 109, 242, 181, 109, 242, 109, 192, 242, 109, 242, 136, 120, 242, 109, 236, 208, 109, 242, 109, 164, 242, 109, 242, 164, 109, 242, 109, 209, 236, 109, 242, 119, 137, 242, 109, 242, 191, 109, 242, 109, 181, 242, 109, 242, 147, 109, 242, 72, 222, 212, 72, 242, 72, 130, 242, 72, 242, 156, 72, 242, 72], "B": [0, 242, 109, 225, 219, 109, 242, 109, 153, 242, 109, 242, 175, 109, 242, 109, 198, 242, 109, 242, 130, 126, 242, 109, 242, 202, 109, 242, 109, 170, 242, 109, 242, 158, 109, 242, 109, 215, 230, 109, 242, 113, 143, 242, 109, 242, 185, 109, 242, 72, 172, 242, 72, 242, 113, 80, 242, 72, 229, 205, 72, 242, 72, 137], "nlab": 63}};
@@ -241,7 +302,7 @@ const EN_INFO={Precentral:'Initiates voluntary movement (M1).',Postcentral:'Proc
  Frontal_Inf_Tri:"Left side: Broca's area – speech production.",Temporal_Sup:"Auditory processing; left side Wernicke's."};
 
 /* ---- UI translations ---- */
-let LANG='de';
+let LANG='en';
 const T={
  de:{sub:'MNI152 · AAL & Harvard-Oxford · vorgerendert',m_explore:'Erkunden',m_quiz:'Quiz',
    tb_slice:'Schicht',tb_atlas:'Deckkraft',sliceWord:'Schicht',
@@ -251,8 +312,18 @@ const T={
    ex_hint_html:'Echtes T1-MRT im MNI-Standardraum, vorgerendert in Python. Oben umschaltbar: <b>AAL</b> oder <b>Harvard-Oxford</b> (FSL). Erst ohne Farbe raten, dann aufdecken.',
    q_identify:'Erkennen',q_function:'Funktion',q_marked:'Markierte Struktur:',
    ask_identify:'Welche Struktur markiert das Fadenkreuz?',ask_func_pre:'Welche Struktur ',ask_func_post:'?',
+   lv_easy:'Einfach',lv_med:'Mittel',lv_hard:'Schwer',ask_identify_easy:'Zu welchem Hirnbereich gehört die Markierung?',
    fb_correct:'✓ Richtig!',fb_wrong:'✗ Richtig wäre: ',
-   s_correct:'Richtig',s_wrong:'Falsch',s_left:'Übrig',q_restart:'Quiz neu starten',
+   s_correct:'Gemeistert',s_wrong:'Fehler',s_left:'Übrig',s_streak:'Serie 🔥',q_restart:'Quiz neu starten',
+   q_next:'Weiter →',q_hint:'💡 Tipp',q_hint_more:'💡 Mehr',q_hint_done:'💡 aufgedeckt',
+   hint_where:'Liegt im ',hint_func:'Aufgabe dieser Region: ',
+   streak3:'🔥 3 in Folge!',streak5:'🔥 5 am Stück – stark!',streak10:'🔥🔥 10er-Serie!',
+   retry_note:' (kommt später nochmal)',
+   diag_side:'Richtige Region — nur die <b>Seite (links/rechts)</b> vertauscht.',
+   diag_lobe:'Knapp daneben: liegt im selben <b>{X}</b>, aber es war eine andere Region.',
+   diag_func:'Funktionell verwandt — ähnliche Aufgabe, aber eine andere Region war gesucht.',
+   qs_type:'Frageart',qs_diff:'Schwierigkeit',qs_count:'Anzahl',qs_help:'Lösungshilfe',
+   qs_anatomy:'Anatomie',qs_function:'Funktion',qs_mixed:'Gemischt',qs_auto:'Auto',qs_help_on:'Tipps an',qs_help_off:'Ohne',
    q_done:'Fertig 🧠',q_again:'Nochmal',finished:'Durchlauf beendet',
    v90:'Stark! Sitzt. 🎯',v70:'Gut – noch ein, zwei Runden.',v50:'Solide. Geh die Wackelkandidaten im Erkunden-Modus durch.',v0:'Noch holprig – erst erkunden, dann wieder testen.',
    bg_name:'Hintergrund / außerhalb',bg_info:'Kein Hirngewebe an dieser Stelle.',
@@ -265,8 +336,18 @@ const T={
    ex_hint_html:'Real T1 MRI in MNI standard space, pre-rendered in Python. Switchable at the top: <b>AAL</b> or <b>Harvard-Oxford</b> (FSL). Try guessing without colour first, then reveal.',
    q_identify:'Identify',q_function:'Function',q_marked:'Marked structure:',
    ask_identify:'Which structure does the crosshair mark?',ask_func_pre:'Which structure ',ask_func_post:'?',
+   lv_easy:'Easy',lv_med:'Medium',lv_hard:'Hard',ask_identify_easy:'Which brain region does the marker belong to?',
    fb_correct:'✓ Correct!',fb_wrong:'✗ Correct answer: ',
-   s_correct:'Correct',s_wrong:'Wrong',s_left:'Left',q_restart:'Restart quiz',
+   s_correct:'Mastered',s_wrong:'Errors',s_left:'Left',s_streak:'Streak 🔥',q_restart:'Restart quiz',
+   q_next:'Next →',q_hint:'💡 Hint',q_hint_more:'💡 More',q_hint_done:'💡 revealed',
+   hint_where:'Located in ',hint_func:'What this region does: ',
+   streak3:'🔥 3 in a row!',streak5:'🔥 5 straight – nice!',streak10:'🔥🔥 10-streak!',
+   retry_note:' (will come back later)',
+   diag_side:'Right region — you only swapped the <b>side (left/right)</b>.',
+   diag_lobe:'Close: same <b>{X}</b>, but a different region was asked.',
+   diag_func:'Functionally related — similar role, but a different region was asked.',
+   qs_type:'Question',qs_diff:'Difficulty',qs_count:'Count',qs_help:'Help',
+   qs_anatomy:'Anatomy',qs_function:'Function',qs_mixed:'Mixed',qs_auto:'Auto',qs_help_on:'Hints on',qs_help_off:'Off',
    q_done:'Done 🧠',q_again:'Again',finished:'Round complete',
    v90:'Strong! You\u2019ve got it. 🎯',v70:'Good – one or two more rounds.',v50:'Solid. Review the tricky ones in Explore mode.',v0:'Still shaky – explore first, then test again.',
    bg_name:'Background / outside',bg_info:'No brain tissue here.',
@@ -346,6 +427,13 @@ const $=id=>document.getElementById(id);
 const cols=META.aal.cols, cellW=META.aal.cellW, cellH=META.aal.cellH, n=META.aal.n;
 const labels=META.aal.labels;                 // AAL label names (used by AAL helpers)
 let mode='explore', cur=Math.floor(n/2), opacity=0.45, quiz=null, marker=null, lastIdx=null, atlas='aal';
+let hintStage=0;
+let qMode='anatomy', qCountSel='auto', quizHintAllowed=true;
+function updateHintBtn(){
+  const b=$('qHint'); if(!b)return;
+  if(hintStage>=2){ b.disabled=true; b.textContent=T[LANG].q_hint_done; }
+  else { b.disabled=false; b.textContent=hintStage===1?T[LANG].q_hint_more:T[LANG].q_hint; }
+}
 
 const ATL={
  aal:{R:META.aal.R,G:META.aal.G,B:META.aal.B, rep:META.aal.rep, sliceMM:META.aal.sliceMM, quiz:QUIZ_AAL,
@@ -385,7 +473,24 @@ function coloredCell(s){
   const [sx,sy]=srcXY(s);
   const src=labelCtx.getImageData(sx,sy,cellW,cellH);
   const out=tmpCtx.createImageData(cellW,cellH);
-  const sd=src.data, od=out.data, R=A().R,G=A().G,B=A().B;
+  const sd=src.data, od=out.data;
+  if(level==='easy'){
+    const cc=clusterCols();
+    for(let p=0;p<sd.length;p+=4){const idx=sd[p];
+      if(idx>0&&idx<cc.ca.length&&cc.ca[idx]){od[p]=cc.cr[idx];od[p+1]=cc.cg[idx];od[p+2]=cc.cb[idx];od[p+3]=255;}
+      else od[p+3]=0;}
+    tmpCtx.putImageData(out,0,0);
+    return tmp;
+  }
+  if(level==='med'){
+    const cc=medCols();
+    for(let p=0;p<sd.length;p+=4){const idx=sd[p];
+      if(idx>0&&idx<cc.ca.length&&cc.ca[idx]){od[p]=cc.cr[idx];od[p+1]=cc.cg[idx];od[p+2]=cc.cb[idx];od[p+3]=255;}
+      else od[p+3]=0;}
+    tmpCtx.putImageData(out,0,0);
+    return tmp;
+  }
+  const R=A().R,G=A().G,B=A().B;
   for(let p=0;p<sd.length;p+=4){
     const idx=sd[p];
     if(idx>0&&idx<R.length){od[p]=R[idx];od[p+1]=G[idx];od[p+2]=B[idx];od[p+3]=255;}
@@ -433,22 +538,47 @@ function locAt(clientX,clientY){
 
 function showExplore(idx){
   lastIdx=idx;
+  $('expName').style.color='';
+  if(level==='easy'){
+    const cl=idx>0?clusterLabel(idx):T[LANG].bg_name;
+    const ci=idx>0?CLUSTERS_DE.indexOf(clusterDE(idx)):-1;
+    if(ci>=0) $('expName').style.color='rgb('+CLUSTER_RGB[ci].join(',')+')';
+    $('expName').textContent=cl||'—';
+    $('expEn').textContent='';
+    $('expInfo').textContent=idx>0?(cl+' '+clusterInfo(idx)):'';
+    return;
+  }
   const h=A().name(idx);
-  $('expName').textContent=h.name;
+  if(level==='med'){
+    const g=idx>0?medGroupIdx(idx):-1;
+    const gl=idx>0?medLabel(idx):T[LANG].bg_name;
+    if(g>=0) $('expName').style.color='rgb('+MED_RGB[g].join(',')+')';
+    $('expName').textContent=gl||'—';
+    const sub=idx>0?mergedName(idx):'';
+    const norm=s=>String(s||'').toLowerCase().replace(/\s*\([^)]*\)/g,'').trim();
+    const showSub = sub && norm(sub)!==norm(gl);
+    $('expEn').textContent=showSub?sub:'';
+    const f=idx>0?A().func(idx):'';
+    $('expInfo').textContent=idx>0?(f?(sub+' '+f+'.'):''):'';
+    return;
+  }
+  const nm=h.name;
+  $('expName').textContent=nm;
   $('expEn').textContent=h.sub||'';
   let line='';
-  if(idx>0){ const f=A().func(idx); line = f ? (h.name+' '+f+'.') : (h.info||''); }
+  if(idx>0){ const f=A().func(idx); line = f ? (nm+' '+f+'.') : (h.info||''); }
   $('expInfo').textContent=line;
 }
 function resetExplore(){
   lastIdx=null; marker=null;
+  $('expName').style.color='';
   $('expName').textContent=T[LANG].ex_name0; $('expEn').textContent=''; $('expInfo').textContent='';
 }
 
 cv.addEventListener('click',e=>{
   if(!ready)return;
   if(mode==='explore'){ const loc=locAt(e.clientX,e.clientY); marker={col:loc.col,row:loc.row}; showExplore(loc.idx); draw(); return; }
-  if(mode==='quiz'&&quiz&&quiz.type==='finden'&&!quiz.locked){ handleFind(e); }
+  if(mode==='quiz'&&quiz&&quiz.curType==='finden'&&!quiz.locked){ handleFind(e); }
 });
 
 $('slice').addEventListener('input',e=>{cur=+e.target.value;marker=null;draw();});
@@ -558,10 +688,95 @@ function coreKey(lab){
 function lobeOf(i){return LOBE[coreKey(labels[i])]||'—';}
 function sideOf(i){const l=labels[i];return l&&l.endsWith('_R')?'rechts':(l&&l.endsWith('_L')?'links':'');}
 
+/* ---------- EINFACH-MODUS: anatomische Cluster (Großhirnlappen + Kerne) ----------
+   Lappen-Parzellierung nach Tzourio-Mazoyer et al. (AAL, NeuroImage 2002) für AAL
+   bzw. Desikan/Makris (Harvard-Oxford) – L/R zusammengefasst, ~45/63 Regionen -> 8 Cluster. */
+let level='easy';
+const CLUSTERS_DE=['Frontallappen','Parietallappen','Temporallappen','Okzipitallappen','Insel','Limbisches System','Basalganglien','Thalamus','Hirnstamm & Kleinhirn'];
+const CLUSTERS_EN=['Frontal lobe','Parietal lobe','Temporal lobe','Occipital lobe','Insula','Limbic system','Basal ganglia','Thalamus','Brainstem & cerebellum'];
+const CLUSTER_INFO_DE={'Frontallappen':'steuert Bewegung, Planung, Sprache und Persönlichkeit.','Parietallappen':'verarbeitet Berührung, Raum und Aufmerksamkeit.','Temporallappen':'verarbeitet Hören, Sprache, Gedächtnis und Gesichter.','Okzipitallappen':'ist das Sehzentrum des Gehirns.','Insel':'verarbeitet Körpergefühl, Geschmack und Emotion.','Limbisches System':'steuert Emotion, Gedächtnis und Motivation.','Basalganglien':'steuern Bewegung, Lernen und Belohnung (Striatum, Pallidum).','Thalamus':'ist die zentrale Umschaltstation aller Sinnesbahnen.','Hirnstamm & Kleinhirn':'koordiniert Gleichgewicht, Bewegung und vitale Funktionen.'};
+const CLUSTER_INFO_EN={'Frontal lobe':'controls movement, planning, language and personality.','Parietal lobe':'processes touch, space and attention.','Temporal lobe':'processes hearing, language, memory and faces.','Occipital lobe':'is the brain\u2019s visual centre.','Insula':'processes interoception, taste and emotion.','Limbic system':'drives emotion, memory and motivation.','Basal ganglia':'control movement, learning and reward (striatum, pallidum).','Thalamus':'is the central relay station for all sensory pathways.','Brainstem & cerebellum':'coordinates balance, movement and vital functions.'};
+function aalClusterDE(idx){
+  const ck=coreKey(labels[idx]);
+  if(ck==='Thalamus') return 'Thalamus';
+  let l=LOBE[ck]; if(!l)return null;
+  if(l==='Kleinhirn')l='Hirnstamm & Kleinhirn';
+  if(l==='Basalganglien / Thalamus')l='Basalganglien';
+  return l;
+}
+const HO_CLUSTER_DE={1:'Frontallappen',2:'Insel',3:'Frontallappen',4:'Frontallappen',5:'Frontallappen',6:'Frontallappen',7:'Frontallappen',8:'Temporallappen',9:'Temporallappen',10:'Temporallappen',11:'Temporallappen',12:'Temporallappen',13:'Temporallappen',14:'Temporallappen',15:'Temporallappen',16:'Temporallappen',17:'Parietallappen',18:'Parietallappen',19:'Parietallappen',20:'Parietallappen',21:'Parietallappen',22:'Okzipitallappen',23:'Okzipitallappen',24:'Okzipitallappen',25:'Frontallappen',26:'Frontallappen',27:'Limbisches System',28:'Limbisches System',29:'Limbisches System',30:'Limbisches System',31:'Parietallappen',32:'Okzipitallappen',33:'Frontallappen',34:'Limbisches System',35:'Limbisches System',36:'Okzipitallappen',37:'Temporallappen',38:'Temporallappen',39:'Temporallappen',40:'Okzipitallappen',41:'Frontallappen',42:'Insel',43:'Parietallappen',44:'Temporallappen',45:'Temporallappen',46:'Temporallappen',47:'Okzipitallappen',48:'Okzipitallappen',49:'Thalamus',50:'Thalamus',51:'Basalganglien',52:'Basalganglien',53:'Basalganglien',54:'Basalganglien',55:'Basalganglien',56:'Basalganglien',57:'Limbisches System',58:'Limbisches System',59:'Limbisches System',60:'Limbisches System',61:'Basalganglien',62:'Basalganglien',63:'Hirnstamm & Kleinhirn'};
+function clusterDE(idx){ if(!idx) return null; return atlas==='aal'?aalClusterDE(idx):HO_CLUSTER_DE[idx]; }
+function clusterLabel(idx){const de=clusterDE(idx); if(!de)return null; const i=CLUSTERS_DE.indexOf(de); return LANG==='de'?CLUSTERS_DE[i]:CLUSTERS_EN[i];}
+function clusterInfo(idx){const de=clusterDE(idx); if(!de)return ''; const i=CLUSTERS_DE.indexOf(de); return LANG==='de'?(CLUSTER_INFO_DE[de]||''):(CLUSTER_INFO_EN[CLUSTERS_EN[i]]||'');}
+function clusterOptions(correct){const pool=(LANG==='de'?CLUSTERS_DE:CLUSTERS_EN).filter(c=>c!==correct); shuffle(pool); return shuffle([correct,...pool.slice(0,3)]);}
+// Eine Farbe pro Cluster (Reihenfolge wie CLUSTERS_DE)
+const CLUSTER_RGB=[[240,168,48],[51,198,182],[99,155,255],[197,108,224],[82,210,126],[239,93,101],[240,214,110],[225,128,171],[150,168,180]];
+let _clusterCols={};
+function clusterCols(){
+  if(_clusterCols[atlas]) return _clusterCols[atlas];
+  const n=A().R.length;
+  const cr=new Uint8Array(n),cg=new Uint8Array(n),cb=new Uint8Array(n),ca=new Uint8Array(n);
+  for(let i=1;i<n;i++){
+    const de=clusterDE(i); if(!de)continue;
+    const c=CLUSTER_RGB[CLUSTERS_DE.indexOf(de)];
+    cr[i]=c[0];cg[i]=c[1];cb[i]=c[2];ca[i]=255;
+  }
+  return _clusterCols[atlas]={cr,cg,cb,ca};
+}
+// ---- MITTEL: anatomische Großgruppen / Systeme (zwischen 9 Clustern und Einzelregionen) ----
+const MED_DE=['Gyrus praecentralis (M1)','Gyrus postcentralis (S1)','Frontaler Kortex','Inselrinde',
+ 'Limbisches System','Obere Schläfenwindung (Hörrinde)','Temporaler Kortex','Parietaler Kortex',
+ 'Precuneus','Visueller Kortex (okzipital)','Basalganglien','Thalamus','Kleinhirn & Hirnstamm'];
+const MED_EN=['Precentral gyrus (M1)','Postcentral gyrus (S1)','Frontal cortex','Insular cortex',
+ 'Limbic system','Superior temporal gyrus (auditory)','Temporal cortex','Parietal cortex',
+ 'Precuneus','Visual cortex (occipital)','Basal ganglia','Thalamus','Cerebellum & brainstem'];
+const MED_RGB=[[240,140,40],[250,205,70],[70,130,240],[40,200,180],[235,80,90],
+ [255,150,80],[180,100,225],[120,175,245],[95,205,205],[200,160,235],
+ [245,210,90],[60,180,200],[150,165,180]];
+const MED_RULES=[
+ [/Precentral|Paracentral/i,0],
+ [/Postcentral/i,1],
+ [/Precuneus|Precuneous/i,8],
+ [/Cingul|Hippocampus|Parahippocampal|Amygdala/i,4],   // Limbisches System (Hippocampus, Amygdala, Cingulum, parahippocampal)
+ [/Insula|Insular/i,3],
+ [/Thalamus/i,11],
+ [/Caudate|Putamen|Pallidum|pallidus|Accumbens/i,10],
+ [/Cerebel|Vermis|Brain.?Stem|Hirnstamm/i,12],
+ [/Calcarine|Cuneus|Cuneal|Lingual|Occipital/i,9],
+ [/Heschl|Planum|Temporal_Pole_Sup|Superior Temporal|Temporal_Sup/i,5],
+ [/Temporal|Fusiform/i,6],
+ [/Parietal|SupraMarginal|Angular/i,7],
+ [/Frontal|Rectus|Olfactory|Supp_Motor|Rolandic|Juxtapositional|Subcallosal/i,2],
+ [/Opercul/i,3],
+];
+function medGroupIdx(idx){
+  if(!idx) return -1;
+  const lbl = atlas==='aal' ? (labels[idx]||'') : (HO_EN[idx]||'');
+  for(const [re,g] of MED_RULES){ if(re.test(lbl)) return g; }
+  return -1;
+}
+function medLabel(idx){ const g=medGroupIdx(idx); return g<0?null:(LANG==='de'?MED_DE[g]:MED_EN[g]); }
+let _medCols={};
+function medCols(){
+  if(_medCols[atlas]) return _medCols[atlas];
+  const n=A().R.length;
+  const cr=new Uint8Array(n),cg=new Uint8Array(n),cb=new Uint8Array(n),ca=new Uint8Array(n);
+  for(let i=1;i<n;i++){ const g=medGroupIdx(i); if(g<0)continue; const c=MED_RGB[g]; cr[i]=c[0];cg[i]=c[1];cb[i]=c[2];ca[i]=255; }
+  return _medCols[atlas]={cr,cg,cb,ca};
+}
+function medOptions(correct){ const pool=(LANG==='de'?MED_DE:MED_EN).filter(c=>c!==correct); shuffle(pool); return shuffle([correct,...pool.slice(0,3)]); }
+
+// Mittel: Regionsname ohne Seite (L/R zusammengefasst)
+function mergedName(idx){
+  if(!idx) return T[LANG].bg_name;
+  if(atlas==='aal') return humanize(labels[idx]).name;
+  return ((LANG==='de'?HO_DE:HO_EN)[idx]||'?').replace(/\s*\((links|rechts|left|right)\)\s*$/,'');
+}
+
 const FUNCQUIZ=(()=>{const out=[];for(const key in FUNC){for(let i=1;i<labels.length;i++){if(coreKey(labels[i])===key&&META.aal.rep[i]){out.push(i);break;}}}return out;})();
 
 const TYPES={
- erkennen:{marker:true,ask:()=>T[LANG].ask_identify},
+ erkennen:{marker:true,ask:()=> (level==='easy'?T[LANG].ask_identify_easy:T[LANG].ask_identify)},
  funktion:{marker:true,ask:i=>T[LANG].ask_func_pre+(A().func(i)||'?')+T[LANG].ask_func_post},
 };
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -576,24 +791,68 @@ $('modeSeg').addEventListener('click',e=>{
   $('quizPanel').classList.toggle('hidden',mode!=='quiz');
   marker=null;
   if(mode==='quiz'){
-    document.querySelectorAll('#qTypeSeg button').forEach(x=>x.classList.toggle('on',x.dataset.t==='erkennen'));
-    quiz=null; buildQuiz('erkennen');
+    quiz=null; buildQuiz();
   }else{setOpacity(0.45);draw();}
 });
-function startQuiz(){ buildQuiz(quiz?quiz.type:'erkennen'); }
-function buildQuiz(type){
-  let base = (type==='funktion') ? A().funcPool().slice() : A().quiz.filter(i=>A().rep[i]).map(sideVariant);
+function startQuiz(){ buildQuiz(); }
+function renderQSettings(){
+  const funcOK = level!=='easy';
+  document.querySelectorAll('#qModeSeg button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.m===qMode);
+    if(b.dataset.m==='funktion') b.disabled=!funcOK;
+  });
+  document.querySelectorAll('#qDiffSeg button').forEach(b=>b.classList.toggle('on', b.dataset.d===level));
+  document.querySelectorAll('#qCountSeg button').forEach(b=>b.classList.toggle('on', b.dataset.c===qCountSel));
+  document.querySelectorAll('#qHelpSeg button').forEach(b=>b.classList.toggle('on', (b.dataset.h==='1')===quizHintAllowed));
+}
+function autoCount(){
+  if(qMode==='funktion') return 16;
+  if(qMode==='mixed') return level==='easy'?12:18;
+  return level==='easy'?12:level==='med'?15:20;
+}
+function quizCount(){ return qCountSel==='auto'?autoCount():parseInt(qCountSel,10); }
+function erkennenBase(){
+  let arr;
+  if(level==='med'){
+    const byG={};
+    A().quiz.filter(i=>A().rep[i]&&medGroupIdx(i)>=0).forEach(i=>{const g=medGroupIdx(i);(byG[g]=byG[g]||[]).push(i);});
+    arr=Object.keys(byG).map(g=>{const a=byG[g];return a[Math.floor(Math.random()*a.length)];});
+  } else {
+    arr=A().quiz.filter(i=>A().rep[i]).map(sideVariant);
+    if(level==='easy') arr=arr.filter(i=>clusterDE(i));
+  }
+  return arr.map(i=>({i,t:'erkennen'}));
+}
+function funktionBase(){ return A().funcPool().slice().map(i=>({i,t:'funktion'})); }
+function buildQuiz(){
+  const funcOK = level!=='easy';
+  if(qMode==='funktion' && !funcOK) qMode='anatomy';
+  let base;
+  if(qMode==='funktion') base=funktionBase();
+  else if(qMode==='mixed') base = funcOK ? erkennenBase().concat(funktionBase()) : erkennenBase();
+  else base=erkennenBase();
   shuffle(base);
-  const max=Math.min(type==='funktion'?16:20, base.length);
-  quiz={type,queue:base.slice(0,max),total:max,correct:0,wrong:0,locked:false};
+  const max=Math.min(quizCount(), base.length);
+  quiz={queue:base.slice(0,max),total:max,
+        mastered:new Set(), wrongClicks:0, firstWrong:new Set(), hinted:new Set(),
+        streak:0, bestStreak:0, lastOk:false, locked:false};
   $('qDone').classList.add('hidden');$('qOpts').classList.remove('hidden');
+  $('qHint').classList.toggle('hidden', !quizHintAllowed);$('qNext').classList.add('hidden');
   document.querySelector('.stats').classList.remove('hidden');document.querySelector('.bar').classList.remove('hidden');
   $('qRestart').classList.remove('hidden');
-  setOpacity(0.5);
+  renderQSettings();
   nextQ();updateStats();
 }
-function correctFor(type,i){ return A().name(i).name; }
+function correctFor(type,i){
+  if(type==='erkennen'){
+    if(level==='easy'){const c=clusterLabel(i); if(c)return c;}
+    if(level==='med'){const m=medLabel(i); if(m)return m;}
+  }
+  return A().name(i).name;
+}
 function optionsFor(type,correct){
+  if(level==='easy'&&type==='erkennen') return clusterOptions(correct);
+  if(level==='med'&&type==='erkennen') return medOptions(correct);
   const pool=[...new Set(A().quiz.map(i=>A().name(i).name).concat(A().funcPool().map(i=>A().name(i).name)))]
     .filter(d=>d!==correct);
   shuffle(pool);
@@ -601,60 +860,151 @@ function optionsFor(type,correct){
 }
 function nextQ(){
   $('qFeedback').textContent='';
+  $('qExplain').classList.add('hidden'); $('qExplain').innerHTML='';
+  $('qNext').classList.add('hidden');
+  hintStage=0; updateHintBtn();
   if(quiz.queue.length===0){finishQuiz();return;}
-  const i=quiz.current=quiz.queue[0]; quiz.locked=false;
-  const def=TYPES[quiz.type], r=A().rep[i];
-  cur=r.s; $('slice').value=cur; marker={col:r.col,row:r.row}; draw();
+  const item=quiz.curItem=quiz.queue[0]; const i=quiz.current=item.i; quiz.curType=item.t; quiz.locked=false;
+  const def=TYPES[quiz.curType], r=A().rep[i];
+  cur=r.s; $('slice').value=cur; marker={col:r.col,row:r.row}; setOpacity(0); draw();
   $('qPrompt').textContent=T[LANG].q_marked;
   $('qInstr').textContent=def.ask(i);
   const box=$('qOpts'); box.innerHTML='';
-  const correct=correctFor(quiz.type,i);
-  optionsFor(quiz.type,correct).forEach(t=>{
+  const correct=correctFor(quiz.curType,i);
+  optionsFor(quiz.curType,correct).forEach(t=>{
     const x=document.createElement('button');x.className='opt';x.textContent=t;
     x.onclick=()=>answer(x,t,correct);box.appendChild(x);
   });
+}
+// Erklärung nach dem Antworten: Name + Funktion der markierten Region
+function explainHTML(i){
+  let title, body;
+  if(level==='easy'){ title=clusterLabel(i)||''; body=clusterInfo(i)||''; }
+  else if(level==='med'){ title=medLabel(i)||mergedName(i); body=A().func(i)||''; }
+  else { const nm=A().name(i); title=nm.name; body=A().func(i)||nm.info||''; }
+  return '<b>'+title+'</b>'+(body?' — '+body:'');
+}
+function showExplain(i, diag){
+  const e=$('qExplain');
+  e.innerHTML=(diag?('<div class="qdiag">↳ '+diag+'</div>'):'')+explainHTML(i);
+  e.classList.remove('hidden');
+}
+// Antworttext -> repräsentativer Region-Index (für near-miss-Diagnose), gecached je Atlas+Sprache
+let _nameIdx={};
+function nameIndexMap(){
+  const key=atlas+'|'+LANG;
+  if(_nameIdx[key]) return _nameIdx[key];
+  const m={}, pool=[...new Set(A().quiz.concat(A().funcPool()))];
+  pool.forEach(i=>{ const nm=A().name(i).name; if(!(nm in m)) m[nm]=i; });
+  return _nameIdx[key]=m;
+}
+// Welche Art Fehler? Vergleicht gewählte Region mit der korrekten.
+function diagLine(correctIdx, chosenText){
+  const ci=nameIndexMap()[chosenText];
+  if(ci==null||ci===correctIdx) return '';            // nur bei auflösbaren Einzelregionen (mittel/schwer + Funktion)
+  if(mergedName(ci)===mergedName(correctIdx)) return T[LANG].diag_side;
+  const cl=clusterLabel(correctIdx);
+  if(cl && clusterLabel(ci)===cl) return T[LANG].diag_lobe.replace('{X}',cl);
+  const f1=A().func(ci), f2=A().func(correctIdx);
+  if(f1&&f2&&f1===f2) return T[LANG].diag_func;
+  return '';
+}
+// Wo liegt die Region? (grober Hinweis, ohne sie zu benennen)
+function hintWhere(i){
+  if(level==='easy') return clusterInfo(i)||'';      // bei easy ist Lappen = Antwort -> Funktion als Hinweis
+  const cl=clusterLabel(i); return cl?(T[LANG].hint_where+cl):'';
+}
+function bumpStreak(ok){
+  if(ok){ quiz.streak++; quiz.bestStreak=Math.max(quiz.bestStreak,quiz.streak);
+    const s=$('streakStat'); s.classList.remove('pulse'); void s.offsetWidth; s.classList.add('pulse'); }
+  else quiz.streak=0;
+}
+function streakMsg(){
+  if(quiz.streak===10) return T[LANG].streak10;
+  if(quiz.streak===5)  return T[LANG].streak5;
+  if(quiz.streak===3)  return T[LANG].streak3;
+  return '';
 }
 function answer(btn,chosen,correct){
   if(quiz.locked)return;quiz.locked=true;
   const bs=[...document.querySelectorAll('#qOpts .opt')];bs.forEach(b=>b.disabled=true);
   const fb=$('qFeedback');
-  if(chosen===correct){quiz.correct++;btn.classList.add('correct');fb.textContent=T[LANG].fb_correct;fb.style.color='var(--ok)';}
-  else{quiz.wrong++;btn.classList.add('wrong');bs.find(b=>b.textContent===correct)?.classList.add('correct');
-       fb.textContent=T[LANG].fb_wrong+correct;fb.style.color='var(--bad)';}
-  advance(chosen===correct);
+  const ok=chosen===correct;
+  if(ok){btn.classList.add('correct');fb.textContent=T[LANG].fb_correct;fb.style.color='var(--ok)';
+    quiz.mastered.add(quiz.current);}
+  else{quiz.wrongClicks++;quiz.firstWrong.add(quiz.current);
+    btn.classList.add('wrong');bs.find(b=>b.textContent===correct)?.classList.add('correct');
+    fb.textContent=T[LANG].fb_wrong+correct+T[LANG].retry_note;fb.style.color='var(--bad)';}
+  bumpStreak(ok);
+  const sm=ok?streakMsg():''; if(sm){fb.textContent+='   '+sm;}
+  showExplain(quiz.current, ok?'':diagLine(quiz.current,chosen));
+  $('qHint').disabled=true;
+  setOpacity(0.5); draw();
+  $('qNext').classList.remove('hidden'); $('qNext').focus();
+  quiz.lastOk=ok; updateStats();
+}
+function goNext(){
+  if(!quiz)return;
+  const item=quiz.curItem;
+  quiz.queue.shift();
+  if(!quiz.lastOk){ const pos=Math.min(3,quiz.queue.length); quiz.queue.splice(pos,0,item); }
+  nextQ(); updateStats();
 }
 function handleFind(e){
   const {idx,col,row}=locAt(e.clientX,e.clientY);
   const fb=$('qFeedback');
-  if(idx===0){fb.style.color='var(--muted)';fb.textContent='Das ist Hintergrund — klick auf Hirngewebe.';return;}
+  if(idx===0){fb.style.color='var(--muted)';fb.textContent=T[LANG].ex_info_bg;return;}
   quiz.locked=true;
   const ok=coreKey(labels[idx])===coreKey(labels[quiz.current]);
-  const r=rep[quiz.current];
-  if(ok){quiz.correct++;marker={col,row};fb.textContent='✓ Richtig getroffen!';fb.style.color='var(--ok)';}
-  else{quiz.wrong++;marker={col:r.col,row:r.row};fb.textContent='✗ '+humanize(labels[idx]).name;fb.style.color='var(--bad)';}
-  setOpacity(0.5); draw(); advance(ok);
+  const r=A().rep[quiz.current];
+  if(ok){quiz.mastered.add(quiz.current);marker={col,row};fb.textContent=T[LANG].fb_correct;fb.style.color='var(--ok)';}
+  else{quiz.wrongClicks++;quiz.firstWrong.add(quiz.current);marker={col:r.col,row:r.row};
+    fb.textContent='✗ '+humanize(labels[idx]).name+T[LANG].retry_note;fb.style.color='var(--bad)';}
+  bumpStreak(ok); const sm=ok?streakMsg():''; if(sm)fb.textContent+='   '+sm;
+  showExplain(quiz.current);
+  setOpacity(0.5); draw();
+  $('qNext').classList.remove('hidden'); quiz.lastOk=ok; updateStats();
 }
-function advance(ok){ quiz.queue.shift(); setTimeout(()=>{ if(quiz.type==='finden')setOpacity(0); nextQ(); updateStats(); }, ok?900:1800); }
 function updateStats(){
-  $('sCorrect').textContent=quiz.correct;$('sWrong').textContent=quiz.wrong;$('sLeft').textContent=quiz.queue.length;
-  $('qBar').style.width=((quiz.total-quiz.queue.length)/quiz.total*100)+'%';
+  $('sCorrect').textContent=quiz.mastered.size;
+  $('sWrong').textContent=quiz.wrongClicks;
+  $('sLeft').textContent=quiz.queue.length;
+  $('sStreak').textContent=quiz.streak;
+  $('qBar').style.width=(quiz.mastered.size/quiz.total*100)+'%';
 }
 function finishQuiz(){
   $('qOpts').classList.add('hidden');document.querySelector('.stats').classList.add('hidden');
   document.querySelector('.bar').classList.add('hidden');$('qRestart').classList.add('hidden');
+  $('qHint').classList.add('hidden');$('qNext').classList.add('hidden');
+  $('qExplain').classList.add('hidden');
   $('qPrompt').textContent='';$('qInstr').textContent=T[LANG].finished;$('qFeedback').textContent=''; marker=null; draw();
   const d=$('qDone');d.classList.remove('hidden');
-  const pct=Math.round(quiz.correct/quiz.total*100);
-  $('qScore').textContent=quiz.correct+' / '+quiz.total;
-  $('qVerdict').textContent=pct>=90?T[LANG].v90:pct>=70?T[LANG].v70:pct>=50?T[LANG].v50:T[LANG].v0;
+  const firstTry=quiz.total-quiz.firstWrong.size;
+  const pct=Math.round(firstTry/quiz.total*100);
+  $('qScore').textContent=firstTry+' / '+quiz.total;
+  let v=pct>=90?T[LANG].v90:pct>=70?T[LANG].v70:pct>=50?T[LANG].v50:T[LANG].v0;
+  if(quiz.bestStreak>=3) v+='   '+(LANG==='de'?'Längste Serie: ':'Best streak: ')+quiz.bestStreak+' 🔥';
+  $('qVerdict').textContent=v;
 }
-$('qTypeSeg').addEventListener('click',e=>{
-  const b=e.target.closest('button'); if(!b)return;
-  document.querySelectorAll('#qTypeSeg button').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on'); buildQuiz(b.dataset.t);
-});
+$('qModeSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.disabled||b.dataset.m===qMode)return; qMode=b.dataset.m; buildQuiz();});
+$('qDiffSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.dataset.d===level)return; level=b.dataset.d; applyLevel();});
+$('qCountSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.dataset.c===qCountSel)return; qCountSel=b.dataset.c; buildQuiz();});
+$('qHelpSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; const v=b.dataset.h==='1'; if(v===quizHintAllowed)return; quizHintAllowed=v; buildQuiz();});
 $('qRestart').addEventListener('click',startQuiz);
 $('qAgain').addEventListener('click',startQuiz);
+$('qHint').addEventListener('click',()=>{
+  if(!quiz||quiz.locked||hintStage>=2)return;
+  hintStage++; quiz.hinted.add(quiz.current);
+  if(hintStage===1){
+    const fb=$('qFeedback'); const w=hintWhere(quiz.current);
+    if(w){ fb.style.color='var(--muted)'; fb.textContent='💡 '+w; }
+    else { hintStage=2; setOpacity(0.5); draw(); }   // kein Texthinweis -> direkt Farbe
+  } else {
+    setOpacity(0.5); draw();
+  }
+  updateHintBtn();
+});
+$('qNext').addEventListener('click',goNext);
 
 function applyLang(L){
   LANG=L;
@@ -662,8 +1012,10 @@ function applyLang(L){
   document.querySelectorAll('[data-i18n]').forEach(el=>{const v=T[L][el.getAttribute('data-i18n')]; if(v!=null)el.textContent=v;});
   $('exHint').innerHTML=T[L].ex_hint_html;
   $('footer').innerHTML=T[L].footer_html;
+  updateHintBtn();
+  renderQSettings();
   if(mode==='explore'){ if(lastIdx!=null)showExplore(lastIdx); else resetExplore(); }
-  if(mode==='quiz'&&quiz){ buildQuiz(quiz.type); }
+  if(mode==='quiz'&&quiz){ buildQuiz(); }
   if(ready)draw();
 }
 $('langSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)applyLang(b.dataset.l);});
@@ -674,12 +1026,22 @@ function setAtlas(a){
   document.querySelectorAll('#atlasSeg button').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
   marker=null; lastIdx=null;
   if(mode==='quiz'){
-    document.querySelectorAll('#qTypeSeg button').forEach(x=>x.classList.toggle('on',x.dataset.t==='erkennen'));
-    quiz=null; buildQuiz('erkennen');
+    quiz=null; buildQuiz();
   }else{ resetExplore(); }
   if(ready)draw();
 }
 $('atlasSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.a!==atlas)setAtlas(b.dataset.a);});
+
+function applyLevel(){
+  document.querySelectorAll('#levelSeg button').forEach(b=>b.classList.toggle('on',b.dataset.level===level));
+  if(level==='easy' && qMode==='funktion') qMode='anatomy';
+  renderQSettings();
+  marker=null; lastIdx=null;
+  if(mode==='quiz'){ quiz=null; buildQuiz(); }
+  else { resetExplore(); }
+  if(ready)draw();
+}
+$('levelSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b&&b.dataset.level!==level){level=b.dataset.level; applyLevel();}});
 
 // init
 function setDevice(){document.body.classList.toggle('mobile', (window.matchMedia&&matchMedia('(pointer:coarse)').matches) || innerWidth<=860);}
@@ -687,7 +1049,8 @@ setDevice();
 addEventListener('resize',()=>{setDevice();positionXhair();});
 addEventListener('orientationchange',()=>{setDevice();setTimeout(positionXhair,200);});
 $('slice').max=n-1; $('slice').value=cur;
-applyLang('de');
+applyLang('en');
+applyLevel();
 let loaded=0;
 function maybe(){if(++loaded===4)buildOffscreen();}
 grayImg.aal.onload=maybe; grayImg.ho.onload=maybe; labImg.aal.onload=maybe; labImg.ho.onload=maybe;
