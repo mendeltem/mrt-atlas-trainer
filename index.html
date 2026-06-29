@@ -56,6 +56,10 @@
   #expEn{color:var(--accent2);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:4px}
   #expInfo{color:var(--muted);font-size:14px;line-height:1.5;margin-top:10px}
   .hint{font-size:13px;color:var(--muted);line-height:1.55}.hint b{color:var(--ink)}
+  #expLinks{margin-top:11px;padding-top:10px;border-top:1px dashed var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.02em}
+  #expLinks a{color:var(--accent2);text-decoration:none;border-bottom:1px solid rgba(51,198,182,.35)}
+  #expLinks a:hover{color:var(--accent);border-bottom-color:var(--accent)}
 
   #qSettings{margin-bottom:9px;display:flex;flex-direction:column;gap:7px}
   .qset-row{display:flex;align-items:center;gap:8px}
@@ -180,6 +184,7 @@
         <div id="expName">Region anklicken</div>
         <div id="expEn"></div>
         <div id="expInfo">Klick auf eine Stelle im Schnittbild — du bekommst sofort den Regionsnamen (deutsch + AAL). Schieberegler oder Mausrad blättert durch die Schichten; „Atlas“ blendet die Farbe ein/aus.</div>
+        <div id="expLinks" class="hidden"></div>
       </div>
       <div id="exHint">Echtes T1-MRT im MNI-Standardraum, vorgerendert in Python. Der farbige Overlay ist der <b>AAL-Atlas</b>. Erst ohne Farbe raten, dann aufdecken.</div>
     </div>
@@ -536,6 +541,11 @@ function locAt(clientX,clientY){
   return {idx,col,row};
 }
 
+function setExpLinks(idx, show){
+  const el=$('expLinks');
+  if(show && idx>0){ const html=regionLinks(idx); if(html){ el.innerHTML=html; el.classList.remove('hidden'); return; } }
+  el.innerHTML=''; el.classList.add('hidden');
+}
 function showExplore(idx){
   lastIdx=idx;
   $('expName').style.color='';
@@ -546,6 +556,7 @@ function showExplore(idx){
     $('expName').textContent=cl||'—';
     $('expEn').textContent='';
     $('expInfo').textContent=idx>0?(cl+' '+clusterInfo(idx)):'';
+    setExpLinks(idx, idx>0);
     return;
   }
   const h=A().name(idx);
@@ -559,20 +570,31 @@ function showExplore(idx){
     const showSub = sub && norm(sub)!==norm(gl);
     $('expEn').textContent=showSub?sub:'';
     const f=idx>0?A().func(idx):'';
-    $('expInfo').textContent=idx>0?(f?(sub+' '+f+'.'):''):'';
+    const det=regionDetail(idx);
+    let line=idx>0?(f?(sub+' '+f+'.'):''):'';
+    if(det) line = line ? (line+' '+det) : det;
+    $('expInfo').textContent=line;
+    setExpLinks(idx, idx>0);
     return;
   }
   const nm=h.name;
   $('expName').textContent=nm;
   $('expEn').textContent=h.sub||'';
   let line='';
-  if(idx>0){ const f=A().func(idx); line = f ? (nm+' '+f+'.') : (h.info||''); }
+  if(idx>0){
+    const f=A().func(idx);
+    line = f ? (nm+' '+f+'.') : (h.info||'');
+    const det=regionDetail(idx);
+    if(det) line = line ? (line+' '+det) : det;
+  }
   $('expInfo').textContent=line;
+  setExpLinks(idx, idx>0);
 }
 function resetExplore(){
   lastIdx=null; marker=null;
   $('expName').style.color='';
   $('expName').textContent=T[LANG].ex_name0; $('expEn').textContent=''; $('expInfo').textContent='';
+  $('expLinks').innerHTML=''; $('expLinks').classList.add('hidden');
 }
 
 cv.addEventListener('click',e=>{
@@ -678,6 +700,89 @@ const EN_FUNC={
  Temporal_Mid:'processes word meaning and visual perception',
  Temporal_Inf:'recognises visual objects (the "what" pathway)',
  Cerebelum:'coordinates movement, balance and timing'};
+
+/* ===================== AUSFÜHRLICHE REGIONS-INFOS (für Mittel & Schwer) =====================
+   Pro Region: kurze Anatomie + Funktion + klinischer Bezug. Keyed nach AAL-coreKey.
+   {de:[...], en:[...]} – jeweils 2–3 Sätze. */
+const DETAIL={
+ Precentral:{de:'Der primäre Motorkortex (M1) liegt direkt vor dem Sulcus centralis und steuert willkürliche Bewegungen der Gegenseite. Die Körperregionen sind als „motorischer Homunkulus" somatotop angeordnet – Gesicht lateral, Bein medial. Eine Schädigung führt zur kontralateralen (anfangs schlaffen, später spastischen) Lähmung.',en:'The primary motor cortex (M1) sits just anterior to the central sulcus and drives voluntary movement of the opposite body half. Body parts are mapped somatotopically as the "motor homunculus" – face laterally, leg medially. Damage causes contralateral weakness (initially flaccid, later spastic).'},
+ Frontal_Sup:{de:'Der obere Stirngyrus ist Teil des präfrontalen Kortex und an Arbeitsgedächtnis, Aufmerksamkeit und Selbststeuerung beteiligt. Sein medialer Anteil gehört zum Default-Mode-Netzwerk. Läsionen können zu Antriebsstörung und Aufmerksamkeitsdefiziten führen.',en:'The superior frontal gyrus is part of the prefrontal cortex and contributes to working memory, attention and self-control. Its medial portion belongs to the default-mode network. Lesions can cause reduced drive and attention deficits.'},
+ Frontal_Sup_Orb:{de:'Der obere orbitofrontale Kortex liegt über der Augenhöhle und ist an Belohnungsbewertung, Impulskontrolle und sozialem Verhalten beteiligt. Schädigungen (z. B. bei Frontalhirntrauma) können Persönlichkeitsänderung und Enthemmung verursachen.',en:'The superior orbitofrontal cortex lies above the eye socket and is involved in reward valuation, impulse control and social behaviour. Damage (e.g. in frontal head trauma) can cause personality change and disinhibition.'},
+ Frontal_Mid:{de:'Der mittlere Stirngyrus entspricht weitgehend dem dorsolateralen Präfrontalkortex (DLPFC) – zentral für Arbeitsgedächtnis, Planung und exekutive Funktionen. Er enthält das frontale Augenfeld für willkürliche Blickbewegungen. Dysfunktion findet sich u. a. bei Depression und ADHS.',en:'The middle frontal gyrus largely corresponds to the dorsolateral prefrontal cortex (DLPFC) – central to working memory, planning and executive function. It contains the frontal eye field for voluntary gaze. Dysfunction is seen in depression and ADHD, among others.'},
+ Frontal_Mid_Orb:{de:'Der mittlere orbitofrontale Kortex verarbeitet Belohnung, Wert und Entscheidungsfindung. Er ist eng mit dem limbischen System verbunden und an emotionaler Bewertung beteiligt.',en:'The middle orbitofrontal cortex processes reward, value and decision-making. It is tightly linked to the limbic system and contributes to emotional appraisal.'},
+ Frontal_Inf_Oper:{de:'Die Pars opercularis der unteren Stirnwindung ist (links) Teil des Broca-Areals und wichtig für Sprachproduktion und Artikulation. Sie ist außerdem am Spiegelneuronensystem beteiligt.',en:'The pars opercularis of the inferior frontal gyrus is (on the left) part of Broca\u2019s area and important for speech production and articulation. It also participates in the mirror-neuron system.'},
+ Frontal_Inf_Tri:{de:'Die Pars triangularis bildet links das Kerngebiet des Broca-Areals und steuert die Sprachproduktion und grammatikalische Verarbeitung. Eine Läsion verursacht die Broca-Aphasie: mühsame, stockende Sprache bei erhaltenem Verständnis.',en:'The pars triangularis forms the core of Broca\u2019s area on the left and governs speech production and grammatical processing. A lesion causes Broca\u2019s aphasia: effortful, halting speech with preserved comprehension.'},
+ Frontal_Inf_Orb:{de:'Die Pars orbitalis der unteren Stirnwindung gehört zum orbitofrontalen Übergang und ist an Sprache, Emotion und Bewertung beteiligt.',en:'The pars orbitalis of the inferior frontal gyrus belongs to the orbitofrontal transition and contributes to language, emotion and valuation.'},
+ Rolandic_Oper:{de:'Das Rolando-Operculum deckt die Insel ab und enthält die Repräsentation von Mund-, Zungen- und Schlundmotorik sowie primäre Geschmacksverarbeitung. Beidseitige Läsion kann ein Foix-Chavany-Marie-Syndrom (faziolinguale Lähmung) verursachen.',en:'The Rolandic operculum covers the insula and contains the motor representation of mouth, tongue and throat plus primary taste processing. Bilateral lesions can cause Foix-Chavany-Marie syndrome (faciolingual palsy).'},
+ Supp_Motor_Area:{de:'Das supplementär-motorische Areal (SMA) liegt medial vor M1 und plant und initiiert komplexe, selbstinitiierte Bewegungssequenzen. Es ist wichtig für Bewegungsstart und Bimanualität; Läsionen verursachen vorübergehend Bewegungsarmut (SMA-Syndrom).',en:'The supplementary motor area (SMA) lies medially anterior to M1 and plans and initiates complex, self-initiated movement sequences. It is key to movement onset and bimanual coordination; lesions cause transient akinesia (SMA syndrome).'},
+ Olfactory:{de:'Die Riechrinde verarbeitet Geruchsreize, die als einzige Sinnesbahn nicht obligat über den Thalamus laufen. Sie ist eng mit limbischen Strukturen verknüpft, weshalb Gerüche stark emotions- und erinnerungsgebunden sind.',en:'The olfactory cortex processes smell, the only sensory pathway that does not obligatorily relay through the thalamus. It is closely tied to limbic structures, which is why odours are strongly linked to emotion and memory.'},
+ Frontal_Sup_Medial:{de:'Der mediale obere Frontalgyrus ist an Entscheidungsfindung, sozialer Kognition und Selbstbezug beteiligt und gehört teils zum Default-Mode-Netzwerk.',en:'The medial superior frontal gyrus contributes to decision-making, social cognition and self-reference and is partly part of the default-mode network.'},
+ Frontal_Med_Orb:{de:'Der mediale orbitofrontale Kortex (ventromedialer PFC) bewertet Belohnung und Risiko und ist zentral für emotionsgeleitete Entscheidungen. Schädigung verändert Risikoverhalten und soziale Urteilsfähigkeit.',en:'The medial orbitofrontal cortex (ventromedial PFC) evaluates reward and risk and is central to emotion-guided decisions. Damage alters risk behaviour and social judgement.'},
+ Rectus:{de:'Der Gyrus rectus liegt ganz basal am Frontallappen und gehört zum orbitofrontalen Kortex (Emotion, Geruch, soziale Hemmung). Er ist bei frontobasalen Traumata besonders verletzungsgefährdet.',en:'The gyrus rectus lies at the very base of the frontal lobe and belongs to the orbitofrontal cortex (emotion, smell, social inhibition). It is particularly vulnerable in frontobasal trauma.'},
+ Insula:{de:'Die tief in der Sylvischen Furche verborgene Inselrinde verarbeitet Interozeption (Körperinneres), Geschmack, Schmerz und Ekel und verknüpft Körperzustände mit Emotion. Die vordere Insel ist Teil des Salienz-Netzwerks.',en:'Hidden deep within the Sylvian fissure, the insula processes interoception (internal body state), taste, pain and disgust, linking bodily states to emotion. The anterior insula is part of the salience network.'},
+ Cingulum_Ant:{de:'Der vordere Gyrus cinguli (ACC) ist an Aufmerksamkeit, Fehler- und Konfliktüberwachung, Schmerz und Emotionsregulation beteiligt. Er gehört zum limbischen System und ist u. a. bei Depression auffällig.',en:'The anterior cingulate cortex (ACC) is involved in attention, error/conflict monitoring, pain and emotion regulation. It belongs to the limbic system and shows abnormalities in conditions such as depression.'},
+ Cingulum_Mid:{de:'Der mittlere Gyrus cinguli verbindet limbische und motorische Funktionen und ist an Handlungsauswahl und der affektiven Komponente von Schmerz beteiligt.',en:'The middle cingulate cortex bridges limbic and motor functions and contributes to action selection and the affective component of pain.'},
+ Cingulum_Post:{de:'Der hintere Gyrus cinguli (PCC) ist ein Kernknoten des Default-Mode-Netzwerks und an Selbstbezug, autobiografischem Gedächtnis und mentaler Vorstellung beteiligt. Frühe Stoffwechselminderung hier ist typisch für die Alzheimer-Erkrankung.',en:'The posterior cingulate cortex (PCC) is a core hub of the default-mode network, involved in self-reference, autobiographical memory and mental imagery. Early hypometabolism here is typical of Alzheimer\u2019s disease.'},
+ Hippocampus:{de:'Der im Temporallappen gelegene Hippocampus ist unverzichtbar für die Bildung neuer episodischer Gedächtnisinhalte und die räumliche Navigation. Beidseitiger Ausfall verursacht eine anterograde Amnesie; er ist bei Alzheimer und Temporallappenepilepsie früh betroffen.',en:'Located in the temporal lobe, the hippocampus is essential for forming new episodic memories and for spatial navigation. Bilateral loss causes anterograde amnesia; it is affected early in Alzheimer\u2019s disease and temporal-lobe epilepsy.'},
+ ParaHippocampal:{de:'Der Gyrus parahippocampalis umgibt den Hippocampus und verarbeitet räumlichen Kontext und Szenen (parahippocampales Ortsareal). Er ist ein wichtiges Eingangstor für Gedächtnisinformationen.',en:'The parahippocampal gyrus surrounds the hippocampus and processes spatial context and scenes (parahippocampal place area). It is a major gateway for memory information.'},
+ Amygdala:{de:'Der Mandelkern (Amygdala) im medialen Temporallappen bewertet die emotionale Bedeutung von Reizen, v. a. Furcht und Bedrohung, und steuert die Stressreaktion. Er ist zentral für Furchtkonditionierung und bei Angststörungen überaktiv.',en:'The amygdala in the medial temporal lobe evaluates the emotional significance of stimuli, especially fear and threat, and drives the stress response. It is central to fear conditioning and is overactive in anxiety disorders.'},
+ Calcarine:{de:'Die Rinde am Sulcus calcarinus ist der primäre Sehkortex (V1), der die Sehinformation beider Augen retinotop empfängt. Eine Läsion verursacht einen kontralateralen Gesichtsfeldausfall (homonyme Hemianopsie).',en:'The cortex along the calcarine sulcus is the primary visual cortex (V1), receiving retinotopic visual input from both eyes. A lesion causes a contralateral visual-field defect (homonymous hemianopia).'},
+ Cuneus:{de:'Der Cuneus im medialen Okzipitallappen gehört zum visuellen Kortex und verarbeitet vorwiegend das untere Gesichtsfeld.',en:'The cuneus in the medial occipital lobe belongs to the visual cortex and mainly processes the lower visual field.'},
+ Lingual:{de:'Der Gyrus lingualis verarbeitet visuelle Reize, besonders Buchstaben, Wörter und Farben, und ist an Worterkennung beteiligt. Läsionen können eine reine Alexie oder Farbenfehlsichtigkeit verursachen.',en:'The lingual gyrus processes visual input, especially letters, words and colour, and is involved in word recognition. Lesions can cause pure alexia or acquired colour blindness.'},
+ Occipital_Sup:{de:'Der obere Okzipitalgyrus gehört zum sekundären visuellen Kortex und verarbeitet Bewegung und räumliche Aspekte des Sehens (dorsaler „Wo"-Pfad).',en:'The superior occipital gyrus belongs to the secondary visual cortex and processes motion and spatial aspects of vision (dorsal "where" pathway).'},
+ Occipital_Mid:{de:'Der mittlere Okzipitalgyrus verarbeitet höhere visuelle Information wie Form und Bewegung und verbindet die primäre Sehrinde mit Assoziationsarealen.',en:'The middle occipital gyrus processes higher visual information such as form and motion, connecting the primary visual cortex to association areas.'},
+ Occipital_Inf:{de:'Der untere Okzipitalgyrus gehört zum ventralen visuellen Strom („Was"-Pfad) und ist an der Objekterkennung beteiligt.',en:'The inferior occipital gyrus belongs to the ventral visual stream (the "what" pathway) and contributes to object recognition.'},
+ Fusiform:{de:'Der Gyrus fusiformis enthält das fusiforme Gesichtsareal (FFA) zur Gesichtserkennung sowie Areale für Wort- und Objekterkennung. Schädigung verursacht eine Prosopagnosie (Gesichtsblindheit).',en:'The fusiform gyrus houses the fusiform face area (FFA) for face recognition as well as areas for word and object recognition. Damage causes prosopagnosia (face blindness).'},
+ Postcentral:{de:'Der primäre somatosensible Kortex (S1) liegt direkt hinter dem Sulcus centralis und empfängt Berührungs-, Druck- und Lageempfindungen der Gegenseite, somatotop als „sensibler Homunkulus" geordnet. Läsionen verursachen kontralaterale Gefühlsstörungen.',en:'The primary somatosensory cortex (S1) lies just behind the central sulcus and receives touch, pressure and proprioceptive input from the opposite side, mapped somatotopically as the "sensory homunculus". Lesions cause contralateral sensory loss.'},
+ Parietal_Sup:{de:'Der obere Scheitellappen integriert sensorische Reize zu räumlicher Orientierung und plant zielgerichtete Bewegungen. Läsionen (v. a. rechts) können Neglect und optische Ataxie verursachen.',en:'The superior parietal lobule integrates sensory input into spatial orientation and plans goal-directed movement. Lesions (especially on the right) can cause neglect and optic ataxia.'},
+ Parietal_Inf:{de:'Der untere Scheitellappen (mit Gyrus supramarginalis und angularis) integriert sensorische Modalitäten und ist zentral für Sprache, Rechnen und Körperwahrnehmung. Läsionen links verursachen u. a. das Gerstmann-Syndrom.',en:'The inferior parietal lobule (including supramarginal and angular gyri) integrates sensory modalities and is central to language, calculation and body awareness. Left-sided lesions can cause Gerstmann syndrome.'},
+ SupraMarginal:{de:'Der Gyrus supramarginalis ist an phonologischer Sprachverarbeitung, Lesen und Werkzeuggebrauch beteiligt. Läsionen können eine Leitungsaphasie oder Apraxie verursachen.',en:'The supramarginal gyrus is involved in phonological language processing, reading and tool use. Lesions can cause conduction aphasia or apraxia.'},
+ Angular:{de:'Der Gyrus angularis verknüpft mehrere Sinnesmodalitäten und ist wichtig für Lesen, Schreiben, Rechnen und das Verstehen von Metaphern. Eine Läsion links kann das Gerstmann-Syndrom (Akalkulie, Agraphie, Finger-Agnosie, Rechts-Links-Störung) auslösen.',en:'The angular gyrus links multiple sensory modalities and is important for reading, writing, arithmetic and understanding metaphor. A left-sided lesion can produce Gerstmann syndrome (acalculia, agraphia, finger agnosia, left-right confusion).'},
+ Precuneus:{de:'Der Precuneus im medialen Parietallappen ist an mentaler Vorstellung, episodischem Gedächtnis und Selbstwahrnehmung beteiligt und gehört zum Default-Mode-Netzwerk. Er zählt zu den stoffwechselaktivsten Hirnregionen in Ruhe.',en:'The precuneus in the medial parietal lobe is involved in mental imagery, episodic memory and self-awareness and is part of the default-mode network. It is among the most metabolically active regions at rest.'},
+ Paracentral_Lobule:{de:'Der Lobulus paracentralis liegt medial und enthält die motorische und sensible Repräsentation des Beins und des Fußes sowie das Zentrum der Blasen- und Mastdarmkontrolle. Beidseitige Läsion (z. B. Falxmeningeom) verursacht Beinparese und Inkontinenz.',en:'The paracentral lobule lies medially and contains the motor and sensory representation of the leg and foot as well as the centre for bladder and bowel control. Bilateral lesions (e.g. falx meningioma) cause leg paresis and incontinence.'},
+ Caudate:{de:'Der Nucleus caudatus bildet zusammen mit dem Putamen das Striatum, das Eingangstor der Basalganglien. Er ist an der Motorikkontrolle, am prozeduralen Lernen und an Belohnung beteiligt. Atrophie des Caudatus ist ein Kennzeichen der Chorea Huntington.',en:'Together with the putamen, the caudate nucleus forms the striatum, the input gate of the basal ganglia. It contributes to motor control, procedural learning and reward. Caudate atrophy is a hallmark of Huntington\u2019s chorea.'},
+ Putamen:{de:'Das Putamen bildet mit dem Pallidum den Nucleus lentiformis und gehört zum Striatum der Basalganglien. Es reguliert vor allem die Amplitude und Geschwindigkeit von Bewegungen. Es ist bei Morbus Parkinson und Dystonien funktionell beeinträchtigt.',en:'The putamen forms the lentiform nucleus together with the pallidum and is part of the striatum of the basal ganglia. It mainly regulates the amplitude and speed of movement. It is functionally impaired in Parkinson\u2019s disease and dystonias.'},
+ Pallidum:{de:'Der Globus pallidus ist die wichtigste Ausgangsstation der Basalganglien und feinjustiert über hemmende Bahnen die Bewegung. Sein innerer Teil (GPi) ist ein Zielpunkt der tiefen Hirnstimulation bei Parkinson und Dystonie.',en:'The globus pallidus is the main output station of the basal ganglia, fine-tuning movement through inhibitory pathways. Its internal segment (GPi) is a target for deep brain stimulation in Parkinson\u2019s disease and dystonia.'},
+ Thalamus:{de:'Der Thalamus ist die zentrale Umschaltstation: nahezu alle sensiblen, motorischen und limbischen Bahnen werden hier verschaltet, bevor sie den Kortex erreichen. Er steuert außerdem Wachheit und Aufmerksamkeit. Läsionen verursachen Gefühlsstörungen und thalamischen Schmerz.',en:'The thalamus is the brain\u2019s central relay: almost all sensory, motor and limbic pathways are switched here before reaching the cortex. It also regulates arousal and attention. Lesions cause sensory loss and thalamic pain.'},
+ Heschl:{de:'Die Heschl-Querwindung beherbergt den primären Hörkortex (A1), der Tonhöhen tonotop verarbeitet. Eine beidseitige Läsion ist nötig, um Taubheit zu verursachen, da jedes Ohr beidseitig repräsentiert ist.',en:'Heschl\u2019s gyrus houses the primary auditory cortex (A1), which processes pitch tonotopically. Bilateral lesions are needed to cause deafness, since each ear is represented on both sides.'},
+ Temporal_Sup:{de:'Die obere Schläfenwindung verarbeitet Gehörtes; ihr hinterer Anteil links beherbergt das Wernicke-Areal für das Sprachverständnis. Eine Läsion verursacht die Wernicke-Aphasie: flüssige, aber inhaltsleere Sprache bei gestörtem Verständnis.',en:'The superior temporal gyrus processes sound; its posterior part on the left holds Wernicke\u2019s area for language comprehension. A lesion causes Wernicke\u2019s aphasia: fluent but empty speech with impaired comprehension.'},
+ Temporal_Pole_Sup:{de:'Der obere Temporalpol verbindet Sinneswahrnehmung mit Emotion und Gedächtnis und ist an der semantischen Verarbeitung und sozialen Kognition beteiligt.',en:'The superior temporal pole links perception with emotion and memory and contributes to semantic processing and social cognition.'},
+ Temporal_Mid:{de:'Die mittlere Schläfenwindung verarbeitet Wortbedeutung, Sprachverständnis und Aspekte der visuellen Bewegungswahrnehmung (Areal MT/V5).',en:'The middle temporal gyrus processes word meaning, language comprehension and aspects of visual motion perception (area MT/V5).'},
+ Temporal_Pole_Mid:{de:'Der mittlere Temporalpol gehört zum semantischen Netzwerk und ist an Begriffswissen und sozialem Verständnis beteiligt; er ist bei der semantischen Demenz früh betroffen.',en:'The middle temporal pole belongs to the semantic network and contributes to conceptual knowledge and social understanding; it is affected early in semantic dementia.'},
+ Temporal_Inf:{de:'Die untere Schläfenwindung ist Endstation des ventralen „Was"-Pfads und entscheidend für die Erkennung von Objekten, Mustern und Wörtern.',en:'The inferior temporal gyrus is the endpoint of the ventral "what" pathway and crucial for recognising objects, patterns and words.'},
+ Cerebelum:{de:'Das Kleinhirn koordiniert Bewegungen, Gleichgewicht, Haltung und das zeitliche Timing und ist am motorischen Lernen beteiligt. Es wirkt auf die ipsilaterale Körperhälfte; Läsionen verursachen Ataxie, Dysmetrie und Intentionstremor.',en:'The cerebellum coordinates movement, balance, posture and timing and contributes to motor learning. It acts on the ipsilateral body half; lesions cause ataxia, dysmetria and intention tremor.'},
+ Vermis:{de:'Der Kleinhirnwurm (Vermis) verbindet die beiden Kleinhirnhälften und steuert vor allem Rumpfstabilität und Gang. Eine Schädigung verursacht eine Rumpfataxie mit breitbeinigem, unsicherem Gang.',en:'The cerebellar vermis connects the two cerebellar hemispheres and chiefly governs trunk stability and gait. Damage causes truncal ataxia with a wide-based, unsteady gait.'},
+ Accumbens:{de:'Der Nucleus accumbens ist das ventrale Striatum und ein Kernknoten des Belohnungssystems; er verarbeitet Motivation, Lust und Verstärkung. Er spielt eine zentrale Rolle bei Sucht.',en:'The nucleus accumbens is the ventral striatum and a core hub of the reward system, processing motivation, pleasure and reinforcement. It plays a central role in addiction.'},
+ Brainstem:{de:'Der Hirnstamm (Mittelhirn, Brücke, verlängertes Mark) steuert lebenswichtige Funktionen wie Atmung, Kreislauf und Wachheit und enthält die Ursprungskerne der Hirnnerven. Er ist Durchgang für alle auf- und absteigenden Bahnen.',en:'The brainstem (midbrain, pons, medulla) controls vital functions such as breathing, circulation and arousal and contains the cranial nerve nuclei. It is the conduit for all ascending and descending pathways.'}
+};
+/* HO-Atlas-Index -> DETAIL-Schlüssel (wo eine sinnvolle Entsprechung existiert) */
+const HO_DETAIL_KEY={1:'Frontal_Sup',2:'Insula',3:'Frontal_Sup',4:'Frontal_Mid',5:'Frontal_Inf_Tri',6:'Frontal_Inf_Oper',7:'Precentral',8:'Temporal_Pole_Sup',9:'Temporal_Sup',10:'Temporal_Sup',11:'Temporal_Mid',12:'Temporal_Mid',13:'Temporal_Mid',14:'Temporal_Inf',15:'Temporal_Inf',16:'Temporal_Inf',17:'Postcentral',18:'Parietal_Sup',19:'SupraMarginal',20:'SupraMarginal',21:'Angular',22:'Occipital_Mid',23:'Occipital_Inf',24:'Calcarine',25:'Frontal_Sup_Medial',26:'Supp_Motor_Area',27:'Frontal_Med_Orb',29:'Cingulum_Ant',30:'Cingulum_Post',31:'Precuneus',32:'Cuneus',33:'Frontal_Med_Orb',34:'ParaHippocampal',35:'ParaHippocampal',36:'Lingual',37:'Fusiform',38:'Fusiform',39:'Fusiform',41:'Fusiform',42:'Heschl',45:'Heschl',48:'Calcarine',49:'Thalamus',51:'Caudate',53:'Putamen',55:'Pallidum',57:'Hippocampus',59:'Amygdala',61:'Accumbens',63:'Brainstem'};
+
+/* Liefert den ausführlichen Beschreibungstext zur aktuellen Region (oder '') */
+function regionDetail(idx){
+  if(!idx||idx<1) return '';
+  let key='';
+  if(atlas==='aal') key=coreKey(labels[idx]);
+  else key=HO_DETAIL_KEY[idx]||'';
+  const d=DETAIL[key];
+  return d?(d[LANG]||d.en):'';
+}
+/* Baut Weiterlesen-Links (Wikipedia + Radiopaedia) für die Region */
+function regionLinks(idx){
+  if(!idx||idx<1) return '';
+  let name='';
+  if(atlas==='aal'){ const h=humanize(labels[idx]); name=h.name; }
+  else { name=(LANG==='de'?HO_DE:HO_EN)[idx]||''; }
+  name=String(name).replace(/\s*\([^)]*\)/g,'').replace(/[–—].*$/,'').trim();
+  if(!name) return '';
+  const wikiHost=LANG==='de'?'de.wikipedia.org':'en.wikipedia.org';
+  const wiki='https://'+wikiHost+'/w/index.php?search='+encodeURIComponent(name);
+  const radio='https://radiopaedia.org/search?q='+encodeURIComponent(name)+'&scope=articles';
+  const lblWiki=LANG==='de'?'Wikipedia':'Wikipedia';
+  const lblRadio='Radiopaedia';
+  const intro=LANG==='de'?'Weiterlesen:':'Read more:';
+  return intro+' <a href="'+wiki+'" target="_blank" rel="noopener">'+lblWiki+'</a> · <a href="'+radio+'" target="_blank" rel="noopener">'+lblRadio+'</a>';
+}
 
 function coreKey(lab){
   if(!lab||lab==='Air')return '';
