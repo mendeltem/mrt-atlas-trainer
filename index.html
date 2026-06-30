@@ -610,6 +610,7 @@ function showExplore(idx){
     const det=regionDetail(idx);
     let line=idx>0?(f?(sub+' '+f+'.'):''):'';
     if(det) line = line ? (line+' '+det) : det;
+    if(isExtra(atlas) && !line && idx>0){ const ci=clusterInfo(idx); if(ci) line=clusterLabel(idx)+' '+ci; }
     $('expInfo').textContent=line;
     setExpLinks(idx, idx>0);
     return;
@@ -623,6 +624,7 @@ function showExplore(idx){
     line = f ? (nm+' '+f+'.') : (h.info||'');
     const det=regionDetail(idx);
     if(det) line = line ? (line+' '+det) : det;
+    if(isExtra(atlas) && !line){ const ci=clusterInfo(idx); if(ci) line=clusterLabel(idx)+' '+ci; }
   }
   $('expInfo').textContent=line;
   setExpLinks(idx, idx>0);
@@ -798,6 +800,7 @@ const HO_DETAIL_KEY={1:'Frontal_Sup',2:'Insula',3:'Frontal_Sup',4:'Frontal_Mid',
 /* Liefert den ausführlichen Beschreibungstext zur aktuellen Region (oder '') */
 function regionDetail(idx){
   if(!idx||idx<1) return '';
+  if(isExtra(atlas)) return '';   // Zusatz-Atlanten: keine AAL/HO-Detailtexte (sonst falsche Region)
   let key='';
   if(atlas==='aal') key=coreKey(labels[idx]);
   else key=HO_DETAIL_KEY[idx]||'';
@@ -808,7 +811,8 @@ function regionDetail(idx){
 function regionLinks(idx){
   if(!idx||idx<1) return '';
   let name='';
-  if(atlas==='aal'){ const h=humanize(labels[idx]); name=h.name; }
+  if(isExtra(atlas)){ name=mergedName(idx); }
+  else if(atlas==='aal'){ const h=humanize(labels[idx]); name=h.name; }
   else { name=(LANG==='de'?HO_DE:HO_EN)[idx]||''; }
   name=String(name).replace(/\s*\([^)]*\)/g,'').replace(/[–—].*$/,'').trim();
   if(!name) return '';
