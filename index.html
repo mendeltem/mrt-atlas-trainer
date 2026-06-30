@@ -22,6 +22,9 @@
   .brand h1 .acc{color:var(--accent)}
   .brand .sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;margin-top:6px}
   .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+  .atlasGroups{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+  .atlasGroup{display:flex;flex-direction:column;gap:4px}
+  .grpLbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-left:3px}
   .seg button{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;background:transparent;
     color:var(--muted);border:0;padding:9px 13px;cursor:pointer;transition:.16s;white-space:nowrap}
   .seg button:hover{color:var(--ink)}
@@ -159,10 +162,20 @@
 <main>
   <div class="stage">
     <div class="toolbar">
-      <div class="seg" id="atlasSeg">
-        <button data-a="aal" class="on">AAL</button>
-        <button data-a="ho">Harvard-Oxford</button>
-        <button data-a="jhu" id="wmBtn" style="display:none">White Matter</button>
+      <div class="atlasGroups" id="atlasGroups">
+        <div class="atlasGroup">
+          <span class="grpLbl">Grey Matter</span>
+          <div class="seg" id="atlasSeg">
+            <button data-a="aal" class="on">AAL</button>
+            <button data-a="ho">Harvard-Oxford</button>
+          </div>
+        </div>
+        <div class="atlasGroup" id="wmGroup" style="display:none">
+          <span class="grpLbl">White Matter</span>
+          <div class="seg">
+            <button data-a="jhu" id="wmBtn">JHU</button>
+          </div>
+        </div>
       </div>
       <label><span data-i18n="tb_slice">Schicht</span> <input type="range" id="slice" min="0" max="0" value="0" style="width:150px"></label>
       <label><span data-i18n="tb_atlas">Deckkraft</span> <input type="range" id="opacity" min="0" max="100" value="45" style="width:90px"></label>
@@ -1156,14 +1169,14 @@ function setAtlas(a){
     b.disabled = (a==='jhu' && b.dataset.level!=='hard');
   });
   if(grayCs[a]){grayC=grayCs[a]; labelCtx=labCtxs[a];}
-  document.querySelectorAll('#atlasSeg button').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
+  document.querySelectorAll('#atlasGroups [data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
   marker=null; lastIdx=null;
   if(mode==='quiz'){
     quiz=null; buildQuiz();
   }else{ resetExplore(); }
   if(ready)draw();
 }
-$('atlasSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.a!==atlas)setAtlas(b.dataset.a);});
+$('atlasGroups').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.a!==atlas)setAtlas(b.dataset.a);});
 
 function applyLevel(){
   document.querySelectorAll('#levelSeg button').forEach(b=>b.classList.toggle('on',b.dataset.level===level));
@@ -1191,7 +1204,7 @@ grayImg.aal.onload=maybe; grayImg.ho.onload=maybe; labImg.aal.onload=maybe; labI
 grayImg.aal.src=GRAY_AAL_SRC; grayImg.ho.src=GRAY_HO_SRC;
 labImg.aal.src=LABEL_AAL_SRC; labImg.ho.src=LABEL_HO_SRC;
 if(window.JHU){
-  $('wmBtn').style.display='';
+  $('wmGroup').style.display='';
   grayImg.jhu.onload=maybe; labImg.jhu.onload=maybe;
   grayImg.jhu.src=window.JHU.gray; labImg.jhu.src=window.JHU.label;
 }
