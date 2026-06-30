@@ -41,6 +41,15 @@
   canvas{display:block;background:#000;border-radius:6px;height:100%;width:auto;max-width:100%;aspect-ratio:142/170;cursor:crosshair;
     box-shadow:0 8px 40px rgba(0,0,0,.6)}
   .xhair{position:absolute;pointer-events:none;z-index:4;transform:translate(-50%,-50%)}
+  /* Vertikaler Slice-Regler (oben=superior, unten=inferior) */
+  #sliceCol{position:absolute;right:8px;top:14px;bottom:14px;width:34px;z-index:6;
+    display:flex;align-items:center;justify-content:center}
+  #sliceCol input[type=range]{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);
+    width:200px;accent-color:var(--accent2);cursor:pointer}
+  .sliceCap{position:absolute;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;
+    font-size:10px;color:var(--muted);letter-spacing:.05em}
+  #sliceTick{position:absolute;left:50%;width:16px;height:0;transform:translateX(-50%);
+    border-top:2px solid var(--accent);box-shadow:0 0 4px var(--accent);display:none;pointer-events:none}
   .xhair .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;
     background:var(--accent);box-shadow:0 0 0 2px rgba(0,0,0,.85),0 0 10px 2px rgba(240,168,48,.9)}
   .xhair .ring{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border:2.5px solid var(--accent2);
@@ -175,7 +184,6 @@
           <div class="seg" id="wmSeg"></div>
         </div>
       </div>
-      <label><span data-i18n="tb_slice">Schicht</span> <input type="range" id="slice" min="0" max="0" value="0" style="width:150px"></label>
       <label><span data-i18n="tb_atlas">Deckkraft</span> <input type="range" id="opacity" min="0" max="100" value="45" style="width:90px"></label>
       <span id="sliceInfo"></span>
     </div>
@@ -183,9 +191,15 @@
       <span class="orient" id="oA" style="top:18px;left:50%;transform:translateX(-50%)">A</span>
       <span class="orient" id="oP" style="bottom:18px;left:50%;transform:translateX(-50%)">P</span>
       <span class="orient" id="oRleft" style="left:18px;top:50%;transform:translateY(-50%)">R</span>
-      <span class="orient" id="oLright" style="right:18px;top:50%;transform:translateY(-50%)">L</span>
+      <span class="orient" id="oLright" style="right:46px;top:50%;transform:translateY(-50%)">L</span>
       <canvas id="cv"></canvas>
       <div id="xhair" class="xhair hidden"><span class="ring"></span><span class="dot"></span></div>
+      <div id="sliceCol">
+        <span class="sliceCap" style="top:2px">S</span>
+        <input type="range" id="slice" min="0" max="0" value="0">
+        <div id="sliceTick"></div>
+        <span class="sliceCap" style="bottom:2px">I</span>
+      </div>
     </div>
   </div>
 
@@ -506,7 +520,7 @@ function buildOffscreen(){
   grayC=grayCs[atlas]; labelCtx=labCtxs[atlas];
   K=Math.max(3, Math.round(680/cellH)); DW=cellW*K; DH=cellH*K;
   cv.width=DW; cv.height=DH;
-  ready=true; draw();
+  ready=true; syncSlice(); draw();
 }
 let tmp=document.createElement('canvas'); tmp.width=cellW; tmp.height=cellH;
 let tmpCtx=tmp.getContext('2d');
@@ -556,6 +570,23 @@ function draw(){
   }
   $('sliceInfo').textContent=T[LANG].sliceWord+' '+(cur+1)+'/'+n+'   ·   z = '+A().sliceMM[cur]+' mm';
   positionXhair();
+  updateSliceTick();
+}
+
+// Vertikalen Slice-Regler an die Spaltenhöhe anpassen (Länge = sichtbare Höhe)
+function syncSlice(){
+  const col=$('sliceCol'); if(!col)return;
+  const h=col.clientHeight; if(h>20) $('slice').style.width=h+'px';
+}
+// Quiz: Zielschicht als Markierung am Regler anzeigen
+function updateSliceTick(){
+  const t=$('sliceTick'); if(!t)return;
+  const target=(mode==='quiz'&&marker&&marker.s!=null)?marker.s:null;
+  if(target==null||n<2){ t.style.display='none'; return; }
+  const col=$('sliceCol'), H=col.clientHeight, pad=10;
+  const f=target/(n-1);                 // 0=inferior(unten) .. 1=superior(oben)
+  const y=H - (pad + f*(H-2*pad));       // von oben gemessen
+  t.style.top=y+'px'; t.style.display='block';
 }
 
 function positionXhair(){
@@ -644,9 +675,12 @@ cv.addEventListener('click',e=>{
 
 $('slice').addEventListener('input',e=>{cur=+e.target.value;if(mode!=='quiz')marker=null;draw();});
 $('opacity').addEventListener('input',e=>{opacity=e.target.value/100;draw();});
-$('cv').addEventListener('wheel',e=>{
-  e.preventDefault(); cur=Math.max(0,Math.min(n-1,cur+(e.deltaY>0?1:-1)));
-  $('slice').value=cur; if(mode!=='quiz')marker=null; draw();
+document.querySelector('.canvas-wrap').addEventListener('wheel',e=>{
+  e.preventDefault();                          // stoppt auch das native Rad-Verhalten des Reglers
+  const step = e.deltaY<0 ? 1 : -1;            // Rad hoch = superior (nach oben)
+  const nc = Math.max(0, Math.min(n-1, cur+step));
+  if(nc===cur) return;
+  cur=nc; $('slice').value=cur; if(mode!=='quiz')marker=null; draw();
 },{passive:false});
 
 /* ---------------- QUIZ ENGINE (mehrere Aufgabentypen) ---------------- */
@@ -1202,9 +1236,9 @@ $('levelSeg').addEventListener('click',e=>{const b=e.target.closest('button'); i
 // init
 function setDevice(){document.body.classList.toggle('mobile', (window.matchMedia&&matchMedia('(pointer:coarse)').matches) || innerWidth<=860);}
 setDevice();
-addEventListener('resize',()=>{setDevice();positionXhair();});
-addEventListener('orientationchange',()=>{setDevice();setTimeout(positionXhair,200);});
-$('slice').max=n-1; $('slice').value=cur;
+addEventListener('resize',()=>{setDevice();syncSlice();positionXhair();updateSliceTick();});
+addEventListener('orientationchange',()=>{setDevice();setTimeout(()=>{syncSlice();positionXhair();updateSliceTick();},200);});
+$('slice').max=n-1; $('slice').value=cur; syncSlice();
 applyLang('en');
 applyLevel();
 let loaded=0;
