@@ -1372,12 +1372,18 @@ function setAtlas(a){
   document.querySelectorAll('#levelSeg button').forEach(b=>{ b.disabled=false; b.classList.toggle('on', b.dataset.level===level); });
   if(ready) applyView();
   document.querySelectorAll('#atlasGroups [data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
-  marker=null; lastIdx=null; clearEmarks();
+  marker=null; lastIdx=null;
   if(mode==='quiz'){
     quiz=null; buildQuiz();
-  }else{ resetExplore(); }
+  }else{
+    if(emarks.length && ready){ remapEmarks(); showExplore(emarks[emarks.length-1].idx); }
+    else resetExplore();
+  }
   if(ready)draw();
 }
+// Marker behalten, aber die Region (idx) aus dem aktuellen Atlas neu bestimmen
+function idxAt(col,row,s){ const [sx,sy]=srcXY(s); return labelCtx.getImageData(sx+col,sy+row,1,1).data[0]; }
+function remapEmarks(){ for(const m of emarks){ m.idx=idxAt(m.col,m.row,m.s); } renderEList(); }
 $('atlasGroups').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.a!==atlas){setAtlas(b.dataset.a);closeMenuMobile();}});
 $('viewSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b){setView(b.dataset.v);closeMenuMobile();}});
 function closeMenuMobile(){ if(document.body.classList.contains('mobile')) document.body.classList.remove('menu-open'); }
