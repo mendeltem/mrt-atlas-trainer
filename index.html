@@ -48,8 +48,19 @@
     width:200px;accent-color:var(--accent2);cursor:pointer}
   .sliceCap{position:absolute;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;
     font-size:10px;color:var(--muted);letter-spacing:.05em}
-  #sliceTick{position:absolute;left:50%;width:16px;height:0;transform:translateX(-50%);
-    border-top:2px solid var(--accent);box-shadow:0 0 4px var(--accent);display:none;pointer-events:none}
+  #sliceTick{position:absolute;left:0;right:0;top:0;bottom:0;display:none;pointer-events:none}
+  .stick{position:absolute;left:50%;width:16px;transform:translateX(-50%);border-top:2px solid var(--accent)}
+  .emark{position:absolute;pointer-events:none;z-index:5;transform:translate(-50%,-50%)}
+  .emark .er{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border:2.5px solid #fff;border-radius:50%;opacity:.95}
+  .emark .ed{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:2px solid rgba(0,0,0,.6)}
+  body.mobile .emark .er{left:-22px;top:-22px;width:44px;height:44px;border-width:3px}
+  body.mobile .emark .ed{left:-7px;top:-7px;width:14px;height:14px}
+  #eList{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .ecard{display:flex;gap:9px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 11px}
+  .ecard .swatch{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:3px;border:1px solid rgba(255,255,255,.35)}
+  .ecard .etext{min-width:0}
+  .ecard .ename{font-weight:600;font-size:14px}
+  .ecard .einfo{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.35}
   .xhair .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;
     background:var(--accent);box-shadow:0 0 0 2px rgba(0,0,0,.85),0 0 10px 2px rgba(240,168,48,.9)}
   .xhair .ring{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border:2.5px solid var(--accent2);
@@ -218,6 +229,7 @@
       <span class="orient" id="oLright" style="right:46px;top:50%;transform:translateY(-50%)">L</span>
       <canvas id="cv"></canvas>
       <div id="xhair" class="xhair hidden"><span class="ring"></span><span class="dot"></span></div>
+      <div id="emarks"></div>
       <div id="sliceCol">
         <span class="sliceCap" id="capTop" style="top:2px">S</span>
         <input type="range" id="slice" min="0" max="0" value="0">
@@ -237,6 +249,7 @@
         <div id="expLinks" class="hidden"></div>
       </div>
       <div id="exHint">Echtes T1-MRT im MNI-Standardraum, vorgerendert in Python. Der farbige Overlay ist der <b>AAL-Atlas</b>. Erst ohne Farbe raten, dann aufdecken.</div>
+      <div id="eList"></div>
     </div>
 
     <div id="quizPanel" class="hidden">
@@ -488,6 +501,7 @@ const cols=META.aal.cols, cellW=META.aal.cellW, cellH=META.aal.cellH, n=META.aal
 const labels=META.aal.labels;                 // AAL label names (used by AAL helpers)
 let mode='explore', cur=Math.floor(n/2), opacity=0.45, quiz=null, marker=null, lastIdx=null, atlas='aal';
 const SKEY='mrtAtlasTrainer.v1';
+let emarks=[]; const ECOLORS=['#ffb020','#33c6b6','#63a2ff','#c56ce0','#52d27e'];
 function saveState(){ try{ localStorage.setItem(SKEY, JSON.stringify({atlas,view,level,mode,lang:LANG,opacity})); }catch(e){} }
 let hintStage=0;
 let qMode='anatomy', qCountSel='auto', quizHintAllowed=true;
@@ -567,7 +581,7 @@ function updateMarkers(mk){
 }
 function setView(v){
   if(v===view||!ORIENT[v])return;
-  view=v; marker=null; lastIdx=null;
+  view=v; marker=null; lastIdx=null; clearEmarks();
   if(mode==='quiz'){ quiz=null; buildQuiz(); } else { resetExplore(); }
   applyView();
 }
@@ -620,6 +634,7 @@ function draw(){
   $('sliceInfo').textContent=T[LANG].sliceWord+' '+(cur+1)+'/'+n+'   ·   '+ORIENT[view].axis.toUpperCase()+' = '+A().sliceMM[cur]+' mm';
   positionXhair();
   updateSliceTick();
+  renderEMarks();
 }
 
 // Vertikalen Slice-Regler an die Spaltenhöhe anpassen (Länge = sichtbare Höhe)
@@ -629,13 +644,20 @@ function syncSlice(){
 }
 // Quiz: Zielschicht als Markierung am Regler anzeigen
 function updateSliceTick(){
-  const t=$('sliceTick'); if(!t)return;
-  const target=(marker&&marker.s!=null)?marker.s:null;
-  if(target==null||n<2){ t.style.display='none'; return; }
-  const col=$('sliceCol'), H=col.clientHeight, pad=10;
-  const f=target/(n-1);                 // 0=inferior(unten) .. 1=superior(oben)
-  const y=H - (pad + f*(H-2*pad));       // von oben gemessen
-  t.style.top=y+'px'; t.style.display='block';
+  const cont=$('sliceTick'); if(!cont)return;
+  cont.innerHTML='';
+  const col=$('sliceCol'); if(!col){cont.style.display='none';return;}
+  let list=[];
+  if(mode==='quiz'){ if(marker&&marker.s!=null) list=[{s:marker.s,color:'var(--accent)'}]; }
+  else { list=emarks.map(m=>({s:m.s,color:m.color})); }
+  if(!list.length||n<2){ cont.style.display='none'; return; }
+  const H=col.clientHeight, pad=10; cont.style.display='block';
+  for(const t of list){
+    const f=t.s/(n-1), y=H-(pad+f*(H-2*pad));
+    const ln=document.createElement('div'); ln.className='stick';
+    ln.style.top=y+'px'; ln.style.borderTopColor=t.color; ln.style.boxShadow='0 0 4px '+t.color;
+    cont.appendChild(ln);
+  }
 }
 
 function positionXhair(){
@@ -647,6 +669,57 @@ function positionXhair(){
   el.style.top =(cr.top -wr.top  + my*cr.height/DH)+'px';
   el.classList.remove('hidden');
 }
+function markLeftTop(col,row){
+  const cr=cv.getBoundingClientRect(), wr=cv.parentElement.getBoundingClientRect();
+  const mx=(col+0.5)*K, my=(row+0.5)*K;
+  return { l: cr.left-wr.left + mx*cr.width/DW, t: cr.top-wr.top + my*cr.height/DH };
+}
+function renderEMarks(){
+  const box=$('emarks'); if(!box)return; box.innerHTML='';
+  if(mode!=='explore'||!ready)return;
+  for(const m of emarks){
+    if(m.s!==cur) continue;
+    const p=markLeftTop(m.col,m.row);
+    const d=document.createElement('div'); d.className='emark'; d.style.left=p.l+'px'; d.style.top=p.t+'px';
+    d.innerHTML='<span class="er" style="border-color:'+m.color+'"></span><span class="ed" style="background:'+m.color+'"></span>';
+    box.appendChild(d);
+  }
+}
+// Regionsinfo (level-abhängig) für die Liste
+function infoFor(idx){
+  if(level==='easy'){
+    const label=idx>0?clusterLabel(idx):T[LANG].bg_name;
+    const line=idx>0?((label||'')+' '+clusterInfo(idx)).trim():'';
+    return {label:label||'—', sub:'', line};
+  }
+  const h=A().name(idx);
+  if(level==='med'){
+    const label=idx>0?medLabel(idx):T[LANG].bg_name;
+    const sub=idx>0?mergedName(idx):'';
+    const norm=s=>String(s||'').toLowerCase().replace(/\s*\([^)]*\)/g,'').trim();
+    const showSub=sub&&norm(sub)!==norm(label);
+    const f=idx>0?A().func(idx):''; const det=regionDetail(idx);
+    let line=idx>0?(f?(sub+' '+f+'.'):''):''; if(det)line=line?(line+' '+det):det;
+    if(isExtra(atlas)&&!line&&idx>0){const ci=clusterInfo(idx); if(ci)line=clusterLabel(idx)+' '+ci;}
+    return {label:label||'—', sub:showSub?sub:'', line};
+  }
+  const nm=h.name; let line='';
+  if(idx>0){const f=A().func(idx); line=f?(nm+' '+f+'.'):(h.info||''); const det=regionDetail(idx); if(det)line=line?(line+' '+det):det; if(isExtra(atlas)&&!line){const ci=clusterInfo(idx); if(ci)line=clusterLabel(idx)+' '+ci;}}
+  return {label:nm, sub:h.sub||'', line};
+}
+function renderEList(){
+  const box=$('eList'); if(!box)return; box.innerHTML='';
+  if(mode!=='explore'||emarks.length<2)return;   // Liste erst ab 2 Markierungen
+  for(const m of emarks){
+    const info=infoFor(m.idx);
+    const row=document.createElement('div'); row.className='ecard';
+    row.innerHTML='<span class="swatch" style="background:'+m.color+'"></span><div class="etext"><div class="ename"></div>'+(info.line?'<div class="einfo"></div>':'')+'</div>';
+    row.querySelector('.ename').textContent=info.label+(info.sub?(' · '+info.sub):'');
+    if(info.line) row.querySelector('.einfo').textContent=info.line;
+    box.appendChild(row);
+  }
+}
+function clearEmarks(){ emarks=[]; renderEList(); const b=$('emarks'); if(b)b.innerHTML=''; }
 
 function locAt(clientX,clientY){
   const r=cv.getBoundingClientRect();
@@ -720,7 +793,22 @@ let swiped=false;
 cv.addEventListener('click',e=>{
   if(!ready)return;
   if(swiped){swiped=false;return;}
-  if(mode==='explore'){ const loc=locAt(e.clientX,e.clientY); marker={col:loc.col,row:loc.row,s:cur}; showExplore(loc.idx); draw(); return; }
+  if(mode==='explore'){
+    const loc=locAt(e.clientX,e.clientY), idx=loc.idx;
+    if(idx>0){
+      const ex=emarks.findIndex(m=>m.idx===idx);
+      if(ex>=0){ emarks.splice(ex,1); }                       // nochmal klicken = entfernen
+      else{
+        if(emarks.length>=5) emarks.shift();                  // max 5 (ältestes raus)
+        const used=emarks.map(m=>m.color);
+        const color=ECOLORS.find(c=>!used.includes(c))||ECOLORS[emarks.length%5];
+        emarks.push({col:loc.col,row:loc.row,s:cur,idx,color});
+      }
+    }
+    marker=null;
+    if(emarks.length) showExplore(emarks[emarks.length-1].idx); else resetExplore();
+    renderEList(); draw(); return;
+  }
   if(mode==='quiz'&&quiz&&quiz.curType==='finden'&&!quiz.locked){ handleFind(e); }
 });
 
@@ -1043,7 +1131,7 @@ $('modeSeg').addEventListener('click',e=>{
   b.classList.add('on'); mode=b.dataset.mode; saveState();
   $('explorePanel').classList.toggle('hidden',mode!=='explore');
   $('quizPanel').classList.toggle('hidden',mode!=='quiz');
-  marker=null;
+  marker=null; clearEmarks();
   if(mode==='quiz'){
     quiz=null; buildQuiz();
   }else{setOpacity(0.45);draw();}
@@ -1284,7 +1372,7 @@ function setAtlas(a){
   document.querySelectorAll('#levelSeg button').forEach(b=>{ b.disabled=false; b.classList.toggle('on', b.dataset.level===level); });
   if(ready) applyView();
   document.querySelectorAll('#atlasGroups [data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
-  marker=null; lastIdx=null;
+  marker=null; lastIdx=null; clearEmarks();
   if(mode==='quiz'){
     quiz=null; buildQuiz();
   }else{ resetExplore(); }
@@ -1299,7 +1387,7 @@ function applyLevel(){
   document.querySelectorAll('#levelSeg button').forEach(b=>b.classList.toggle('on',b.dataset.level===level));
   if(level==='easy' && qMode==='funktion') qMode='anatomy';
   renderQSettings();
-  marker=null; lastIdx=null;
+  marker=null; lastIdx=null; clearEmarks();
   if(mode==='quiz'){ quiz=null; buildQuiz(); }
   else { resetExplore(); }
   if(ready)draw(); saveState();
