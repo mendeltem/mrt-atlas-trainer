@@ -630,7 +630,7 @@ function syncSlice(){
 // Quiz: Zielschicht als Markierung am Regler anzeigen
 function updateSliceTick(){
   const t=$('sliceTick'); if(!t)return;
-  const target=(mode==='quiz'&&marker&&marker.s!=null)?marker.s:null;
+  const target=(marker&&marker.s!=null)?marker.s:null;
   if(target==null||n<2){ t.style.display='none'; return; }
   const col=$('sliceCol'), H=col.clientHeight, pad=10;
   const f=target/(n-1);                 // 0=inferior(unten) .. 1=superior(oben)
@@ -720,18 +720,18 @@ let swiped=false;
 cv.addEventListener('click',e=>{
   if(!ready)return;
   if(swiped){swiped=false;return;}
-  if(mode==='explore'){ const loc=locAt(e.clientX,e.clientY); marker={col:loc.col,row:loc.row}; showExplore(loc.idx); draw(); return; }
+  if(mode==='explore'){ const loc=locAt(e.clientX,e.clientY); marker={col:loc.col,row:loc.row,s:cur}; showExplore(loc.idx); draw(); return; }
   if(mode==='quiz'&&quiz&&quiz.curType==='finden'&&!quiz.locked){ handleFind(e); }
 });
 
-$('slice').addEventListener('input',e=>{cur=+e.target.value;if(mode!=='quiz')marker=null;draw();});
+$('slice').addEventListener('input',e=>{cur=+e.target.value;draw();});
 $('opacity').addEventListener('input',e=>{opacity=e.target.value/100;draw();saveState();});
 document.querySelector('.canvas-wrap').addEventListener('wheel',e=>{
   e.preventDefault();                          // stoppt auch das native Rad-Verhalten des Reglers
   const step = e.deltaY<0 ? 1 : -1;            // Rad hoch = superior (nach oben)
   const nc = Math.max(0, Math.min(n-1, cur+step));
   if(nc===cur) return;
-  cur=nc; $('slice').value=cur; if(mode!=='quiz')marker=null; draw();
+  cur=nc; $('slice').value=cur; draw();
 },{passive:false});
 // Touch: vertikal wischen blättert Schichten (hoch = superior)
 (function(){
@@ -742,7 +742,7 @@ document.querySelector('.canvas-wrap').addEventListener('wheel',e=>{
     const dy=y0-e.touches[0].clientY;          // hoch = positiv
     if(Math.abs(dy)>8){ swiped=true; e.preventDefault(); }
     const nc=Math.max(0,Math.min(n-1,c0+Math.round(dy/16)));
-    if(nc!==cur){ cur=nc; $('slice').value=cur; if(mode!=='quiz')marker=null; draw(); }
+    if(nc!==cur){ cur=nc; $('slice').value=cur; draw(); }
   },{passive:false});
   wrap.addEventListener('touchend',()=>{active=false;},{passive:true});
 })();
