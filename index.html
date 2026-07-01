@@ -591,9 +591,15 @@ function updateMarkers(mk){
 }
 function setView(v){
   if(v===view||!ORIENT[v])return;
-  view=v; marker=null; lastIdx=null; clearEmarks();
-  if(mode==='quiz'){ quiz=null; buildQuiz(); } else { resetExplore(); }
-  applyView();
+  view=v;
+  applyView();                                   // Geometrie/Sprites der neuen Ansicht
+  if(marker&&marker.w){ const c=worldToCell(marker.w,view); marker.col=c.col;marker.row=c.row;marker.s=c.s; }
+  for(const m of emarks){ if(m.w){ const c=worldToCell(m.w,view); m.col=c.col;m.row=c.row;m.s=c.s; } }
+  let js=null;
+  if(mode==='quiz'&&marker) js=marker.s;
+  else if(emarks.length) js=emarks[emarks.length-1].s;
+  if(js!=null){ cur=js; $('slice').value=cur; }
+  renderEList(); draw();
 }
 let tmp=document.createElement('canvas'); tmp.width=cellW; tmp.height=cellH;
 let tmpCtx=tmp.getContext('2d');
@@ -683,6 +689,31 @@ function markLeftTop(col,row){
   const cr=cv.getBoundingClientRect(), wr=cv.parentElement.getBoundingClientRect();
   const mx=(col+0.5)*K, my=(row+0.5)*K;
   return { l: cr.left-wr.left + mx*cr.width/DW, t: cr.top-wr.top + my*cr.height/DH };
+}
+// FOV je Ansicht (muss zu render_views.py passen): [Start,Ende] in mm
+const FOV={ axial:{h:[90,-90],v:[90,-126]}, coronal:{h:[90,-90],v:[86,-70]}, sagittal:{h:[90,-126],v:[86,-70]} };
+// Zelle (col,row,slice) einer Ansicht -> MNI-Weltkoordinate {x,y,z}
+function cellToWorld(col,row,s,vw){
+  const f=FOV[vw], o=ORIENT[vw];
+  const wH=f.h[0]+(col+0.5)/cellW*(f.h[1]-f.h[0]);
+  const wV=f.v[0]+(row+0.5)/cellH*(f.v[1]-f.v[0]);
+  const th=o.sliceMM[s];
+  if(vw==='axial')   return {x:wH, y:wV, z:th};
+  if(vw==='coronal') return {x:wH, y:th, z:wV};
+  return {x:th, y:wH, z:wV};                       // sagittal
+}
+// Weltkoordinate -> Zelle (col,row,nächste Schicht) in Zielansicht
+function worldToCell(w,vw){
+  const f=FOV[vw], o=ORIENT[vw];
+  let wH,wV,th;
+  if(vw==='axial'){wH=w.x;wV=w.y;th=w.z;}
+  else if(vw==='coronal'){wH=w.x;wV=w.z;th=w.y;}
+  else {wH=w.y;wV=w.z;th=w.x;}
+  let col=Math.round((wH-f.h[0])/(f.h[1]-f.h[0])*cellW-0.5);
+  let row=Math.round((wV-f.v[0])/(f.v[1]-f.v[0])*cellH-0.5);
+  col=Math.max(0,Math.min(cellW-1,col)); row=Math.max(0,Math.min(cellH-1,row));
+  let s=0,best=1e9; for(let k=0;k<o.sliceMM.length;k++){const d=Math.abs(o.sliceMM[k]-th); if(d<best){best=d;s=k;}}
+  return {col,row,s};
 }
 function renderEMarks(){
   const box=$('emarks'); if(!box)return; box.innerHTML='';
@@ -805,15 +836,13 @@ cv.addEventListener('click',e=>{
   if(swiped){swiped=false;return;}
   if(mode==='explore'){
     const loc=locAt(e.clientX,e.clientY), idx=loc.idx;
-    if(idx>0){
-      const ex=emarks.findIndex(m=>m.idx===idx);
-      if(ex>=0){ emarks.splice(ex,1); }                       // nochmal klicken = entfernen
-      else{
-        if(emarks.length>=5) emarks.shift();                  // max 5 (ältestes raus)
-        const used=emarks.map(m=>m.color);
-        const color=ECOLORS.find(c=>!used.includes(c))||ECOLORS[emarks.length%5];
-        emarks.push({col:loc.col,row:loc.row,s:cur,idx,color});
-      }
+    const ex=emarks.findIndex(m=>m.s===cur && Math.abs(m.col-loc.col)<=8 && Math.abs(m.row-loc.row)<=8);
+    if(ex>=0){ emarks.splice(ex,1); }                        // Klick auf vorhandenes Kreuz = entfernen
+    else if(idx>0){
+      if(emarks.length>=5) emarks.shift();                   // max 5 (ältestes raus)
+      const used=emarks.map(m=>m.color);
+      const color=ECOLORS.find(c=>!used.includes(c))||ECOLORS[emarks.length%5];
+      emarks.push({col:loc.col,row:loc.row,s:cur,idx,color,w:cellToWorld(loc.col,loc.row,cur,view)});
     }
     marker=null;
     if(emarks.length) showExplore(emarks[emarks.length-1].idx); else resetExplore();
@@ -1240,7 +1269,7 @@ function nextQ(){
   if(qViewMode==='random'){ const vs=['axial','coronal','sagittal']; view=vs[Math.floor(Math.random()*vs.length)]; _ch=true; }
   if(_ch) applyView();
   const def=TYPES[quiz.curType], r=A().rep[i];
-  cur=r.s; $('slice').value=cur; marker={col:r.col,row:r.row,s:r.s}; setOpacity(0); draw();
+  cur=r.s; $('slice').value=cur; marker={col:r.col,row:r.row,s:r.s,w:cellToWorld(r.col,r.row,r.s,view)}; setOpacity(0); draw();
   $('qPrompt').textContent=T[LANG].q_marked;
   $('qInstr').textContent=def.ask(i);
   const box=$('qOpts'); box.innerHTML='';
@@ -1331,8 +1360,8 @@ function handleFind(e){
   quiz.locked=true;
   const ok=coreKey(labels[idx])===coreKey(labels[quiz.current]);
   const r=A().rep[quiz.current];
-  if(ok){quiz.mastered.add(quiz.curKey);marker={col,row,s:cur};fb.textContent=T[LANG].fb_correct;fb.style.color='var(--ok)';}
-  else{quiz.wrongClicks++;quiz.firstWrong.add(quiz.curKey);marker={col:r.col,row:r.row,s:r.s};
+  if(ok){quiz.mastered.add(quiz.curKey);marker={col,row,s:cur,w:cellToWorld(col,row,cur,view)};fb.textContent=T[LANG].fb_correct;fb.style.color='var(--ok)';}
+  else{quiz.wrongClicks++;quiz.firstWrong.add(quiz.curKey);marker={col:r.col,row:r.row,s:r.s,w:cellToWorld(r.col,r.row,r.s,view)};
     fb.textContent='✗ '+humanize(labels[idx]).name+T[LANG].retry_note;fb.style.color='var(--bad)';}
   bumpStreak(ok); const sm=ok?streakMsg():''; if(sm)fb.textContent+='   '+sm;
   showExplain(quiz.current);
@@ -1406,13 +1435,10 @@ function setAtlas(a){
   document.querySelectorAll('#levelSeg button').forEach(b=>{ b.disabled=false; b.classList.toggle('on', b.dataset.level===level); });
   if(ready) applyView();
   document.querySelectorAll('#atlasGroups [data-a]').forEach(b=>b.classList.toggle('on',b.dataset.a===a));
-  marker=null; lastIdx=null;
+  marker=null; lastIdx=null; clearEmarks();
   if(mode==='quiz'){
     quiz=null; buildQuiz();
-  }else{
-    if(emarks.length && ready){ remapEmarks(); showExplore(emarks[emarks.length-1].idx); }
-    else resetExplore();
-  }
+  }else{ resetExplore(); }
   if(ready)draw();
 }
 // Marker behalten, aber die Region (idx) aus dem aktuellen Atlas neu bestimmen
