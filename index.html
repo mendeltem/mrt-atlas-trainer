@@ -51,7 +51,7 @@
   #sliceTick{position:absolute;left:0;right:0;top:0;bottom:0;display:none;pointer-events:none}
   .stick{position:absolute;left:50%;width:16px;transform:translateX(-50%);border-top:2px solid var(--accent)}
   .emark{position:absolute;pointer-events:none;z-index:5;transform:translate(-50%,-50%)}
-  .emark .er{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border:2.5px solid #fff;border-radius:50%;opacity:.95}
+  .emark .er{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border:3px solid #fff;border-radius:50%;opacity:.98;box-shadow:0 0 0 1.5px rgba(0,0,0,.6),0 0 6px rgba(0,0,0,.35)}
   .emark .ed{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;border:2px solid rgba(0,0,0,.6)}
   body.mobile .emark .er{left:-22px;top:-22px;width:44px;height:44px;border-width:3px}
   body.mobile .emark .ed{left:-7px;top:-7px;width:14px;height:14px}
@@ -61,6 +61,8 @@
   .ecard .etext{min-width:0}
   .ecard .ename{font-weight:600;font-size:14px}
   .ecard .einfo{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.35}
+  .ecard.collapsed .einfo{display:none}
+  .ecard .echev{margin-left:auto;align-self:center;color:var(--muted);font-size:12px;flex-shrink:0}
   .xhair .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;
     background:var(--accent);box-shadow:0 0 0 2px rgba(0,0,0,.85),0 0 10px 2px rgba(240,168,48,.9)}
   .xhair .ring{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border:2.5px solid var(--accent2);
@@ -750,13 +752,21 @@ function infoFor(idx){
 }
 function renderEList(){
   const box=$('eList'); if(!box)return; box.innerHTML='';
-  if(mode!=='explore'||emarks.length<2)return;   // Liste erst ab 2 Markierungen
-  for(const m of emarks){
-    const info=infoFor(m.idx);
-    const row=document.createElement('div'); row.className='ecard';
-    row.innerHTML='<span class="swatch" style="background:'+m.color+'"></span><div class="etext"><div class="ename"></div>'+(info.line?'<div class="einfo"></div>':'')+'</div>';
+  if(mode!=='explore')return;
+  const rest=emarks.slice(0,-1);                 // alle außer dem zuletzt geklickten (steht oben im Panel)
+  if(rest.length===0)return;
+  for(let k=rest.length-1;k>=0;k--){             // neueste zuerst
+    const m=rest[k], info=infoFor(m.idx), hasInfo=!!info.line;
+    const row=document.createElement('div'); row.className='ecard collapsed';
+    row.innerHTML='<span class="swatch" style="background:'+m.color+'"></span>'+
+      '<div class="etext"><div class="ename"></div>'+(hasInfo?'<div class="einfo"></div>':'')+'</div>'+
+      (hasInfo?'<span class="echev">▾</span>':'');
     row.querySelector('.ename').textContent=info.label+(info.sub?(' · '+info.sub):'');
-    if(info.line) row.querySelector('.einfo').textContent=info.line;
+    if(hasInfo){
+      row.querySelector('.einfo').textContent=info.line;
+      row.style.cursor='pointer';
+      row.addEventListener('click',()=>{ const c=row.classList.toggle('collapsed'); row.querySelector('.echev').textContent=c?'▾':'▴'; });
+    }
     box.appendChild(row);
   }
 }
@@ -840,8 +850,8 @@ cv.addEventListener('click',e=>{
     if(ex>=0){ emarks.splice(ex,1); }                        // Klick auf vorhandenes Kreuz = entfernen
     else if(idx>0){
       if(emarks.length>=5) emarks.shift();                   // max 5 (ältestes raus)
-      const used=emarks.map(m=>m.color);
-      const color=ECOLORS.find(c=>!used.includes(c))||ECOLORS[emarks.length%5];
+      const oc=overlayColor(idx);
+      const color=oc?('rgb('+oc[0]+','+oc[1]+','+oc[2]+')'):'#e8e8e8';
       emarks.push({col:loc.col,row:loc.row,s:cur,idx,color,w:cellToWorld(loc.col,loc.row,cur,view)});
     }
     marker=null;
@@ -1135,6 +1145,13 @@ function medNames(){ return isExtra(atlas)?{de:META[atlas].g2.de,en:META[atlas].
 function medRGBs(){ return isExtra(atlas)?META[atlas].g2.rgb:MED_RGB; }
 function medLabel(idx){ const g=medGroupIdx(idx); if(g<0)return null; const N=medNames(); return LANG==='de'?N.de[g]:N.en[g]; }
 function medColor(idx){ const g=medGroupIdx(idx); return g<0?null:medRGBs()[g]; }
+// Farbe wie im Overlay (level-abhängig) – für Kreuz-Einfärbung
+function overlayColor(idx){
+  if(idx<=0) return null;
+  if(level==='easy'){ const cc=clusterCols(); return (idx<cc.ca.length&&cc.ca[idx])?[cc.cr[idx],cc.cg[idx],cc.cb[idx]]:null; }
+  if(level==='med'){ const cc=medCols(); return (idx<cc.ca.length&&cc.ca[idx])?[cc.cr[idx],cc.cg[idx],cc.cb[idx]]:null; }
+  const R=A().R,G=A().G,B=A().B; return idx<R.length?[R[idx],G[idx],B[idx]]:null;
+}
 let _medCols={};
 function medCols(){
   if(_medCols[atlas]) return _medCols[atlas];
