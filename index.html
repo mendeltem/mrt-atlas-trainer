@@ -279,6 +279,11 @@
             <button data-h="1" data-i18n="qs_help_on">Tipps an</button>
             <button data-h="0" data-i18n="qs_help_off">Ohne</button>
           </div></div>
+        <div class="qset-row"><span class="qset-lbl" data-i18n="qs_view">Ansicht</span>
+          <div class="seg" id="qViewSeg">
+            <button data-qv="fixed" data-i18n="qs_view_fixed">Fest</button>
+            <button data-qv="random" data-i18n="qs_view_rand">Zufällig</button>
+          </div></div>
       </div>
       <div class="card">
         <div class="qprompt" id="qPrompt">Markierte Struktur:</div>
@@ -396,7 +401,7 @@ const T={
    diag_lobe:'Knapp daneben: liegt im selben <b>{X}</b>, aber es war eine andere Region.',
    diag_func:'Funktionell verwandt — ähnliche Aufgabe, aber eine andere Region war gesucht.',
    qs_type:'Frageart',qs_diff:'Schwierigkeit',qs_count:'Anzahl',qs_help:'Lösungshilfe',
-   qs_anatomy:'Anatomie',qs_function:'Funktion',qs_mixed:'Gemischt',qs_auto:'Auto',qs_help_on:'Tipps an',qs_help_off:'Ohne',
+   qs_anatomy:'Anatomie',qs_function:'Funktion',qs_mixed:'Gemischt',qs_auto:'Auto',qs_help_on:'Tipps an',qs_help_off:'Ohne',qs_view:'Ansicht',qs_view_fixed:'Fest',qs_view_rand:'Zufällig',
    q_done:'Fertig 🧠',q_again:'Nochmal',finished:'Durchlauf beendet',
    v90:'Stark! Sitzt. 🎯',v70:'Gut – noch ein, zwei Runden.',v50:'Solide. Geh die Wackelkandidaten im Erkunden-Modus durch.',v0:'Noch holprig – erst erkunden, dann wieder testen.',
    bg_name:'Hintergrund / außerhalb',bg_info:'Kein Hirngewebe an dieser Stelle.',
@@ -420,7 +425,7 @@ const T={
    diag_lobe:'Close: same <b>{X}</b>, but a different region was asked.',
    diag_func:'Functionally related — similar role, but a different region was asked.',
    qs_type:'Question',qs_diff:'Difficulty',qs_count:'Count',qs_help:'Help',
-   qs_anatomy:'Anatomy',qs_function:'Function',qs_mixed:'Mixed',qs_auto:'Auto',qs_help_on:'Hints on',qs_help_off:'Off',
+   qs_anatomy:'Anatomy',qs_function:'Function',qs_mixed:'Mixed',qs_auto:'Auto',qs_help_on:'Hints on',qs_help_off:'Off',qs_view:'View',qs_view_fixed:'Fixed',qs_view_rand:'Random',
    q_done:'Done 🧠',q_again:'Again',finished:'Round complete',
    v90:'Strong! You\u2019ve got it. 🎯',v70:'Good – one or two more rounds.',v50:'Solid. Review the tricky ones in Explore mode.',v0:'Still shaky – explore first, then test again.',
    bg_name:'Background / outside',bg_info:'No brain tissue here.',
@@ -504,7 +509,7 @@ const SKEY='mrtAtlasTrainer.v1';
 let emarks=[]; const ECOLORS=['#ffb020','#33c6b6','#63a2ff','#c56ce0','#52d27e'];
 function saveState(){ try{ localStorage.setItem(SKEY, JSON.stringify({atlas,view,level,mode,lang:LANG,opacity})); }catch(e){} }
 let hintStage=0;
-let qMode='anatomy', qCountSel='auto', quizHintAllowed=true;
+let qMode='anatomy', qCountSel='auto', quizHintAllowed=true, qViewMode='fixed';
 function updateHintBtn(){
   const b=$('qHint'); if(!b)return;
   if(hintStage>=2){ b.disabled=true; b.textContent=T[LANG].q_hint_done; }
@@ -1146,6 +1151,7 @@ function renderQSettings(){
   document.querySelectorAll('#qDiffSeg button').forEach(b=>b.classList.toggle('on', b.dataset.d===level));
   document.querySelectorAll('#qCountSeg button').forEach(b=>b.classList.toggle('on', b.dataset.c===qCountSel));
   document.querySelectorAll('#qHelpSeg button').forEach(b=>b.classList.toggle('on', (b.dataset.h==='1')===quizHintAllowed));
+  document.querySelectorAll('#qViewSeg button').forEach(b=>b.classList.toggle('on', b.dataset.qv===qViewMode));
 }
 function autoCount(){
   if(qMode==='funktion') return 16;
@@ -1207,6 +1213,7 @@ function nextQ(){
   hintStage=0; updateHintBtn();
   if(quiz.queue.length===0){finishQuiz();return;}
   const item=quiz.curItem=quiz.queue[0]; const i=quiz.current=item.i; quiz.curType=item.t; quiz.locked=false;
+  if(qViewMode==='random'){ const vs=['axial','coronal','sagittal']; view=vs[Math.floor(Math.random()*vs.length)]; applyView(); }
   const def=TYPES[quiz.curType], r=A().rep[i];
   cur=r.s; $('slice').value=cur; marker={col:r.col,row:r.row,s:r.s}; setOpacity(0); draw();
   $('qPrompt').textContent=T[LANG].q_marked;
@@ -1332,6 +1339,7 @@ $('qModeSeg').addEventListener('click',e=>{const b=e.target.closest('button'); i
 $('qDiffSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.dataset.d===level)return; level=b.dataset.d; applyLevel();});
 $('qCountSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.dataset.c===qCountSel)return; qCountSel=b.dataset.c; buildQuiz();});
 $('qHelpSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; const v=b.dataset.h==='1'; if(v===quizHintAllowed)return; quizHintAllowed=v; buildQuiz();});
+$('qViewSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.dataset.qv===qViewMode)return; qViewMode=b.dataset.qv; renderQSettings(); if(quiz&&quiz.queue&&quiz.queue.length&&!quiz.locked) nextQ();});
 $('qOptToggle').addEventListener('click',()=>{
   const open=document.body.classList.toggle('qopts-open');
   $('qOptToggle').textContent = open ? '⚙ Optionen ▴' : '⚙ Optionen ▾';
