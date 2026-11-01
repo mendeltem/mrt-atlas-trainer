@@ -30,6 +30,9 @@ neuropsychology.
 - **Configurable quiz:** a settings panel sits at the top of the quiz with
   sensible defaults already selected — just start, or change any option to
   restart the round with new settings. See [The quiz](#the-quiz) below.
+- **Collect & study:** every region you click lands in your personal collection;
+  **Study** turns it into flashcards and multiple-choice tests on what each region
+  does. See [Study mode](#study-mode) below.
 - **Two atlases:** AAL and Harvard-Oxford, each rendered on its matching MNI152 template
 - **Bilingual:** English by default, switch to German anytime
 - **Offline & instant:** everything in a single HTML file — no server, no install
@@ -68,6 +71,36 @@ options, and every answer teaches something — whether right or wrong.
   then the colored overlay as a reveal — instead of a single colour toggle.
 - **Streaks & scoring** – a streak counter with milestone messages, and a final
   score based on **first-try accuracy** plus your best streak.
+
+## Study mode
+
+Learn what the regions *do*, using exactly the regions you picked yourself.
+
+1. **Collect** – click through the MRI in *Explore*. Every region lands in
+   *My collection* (left/right merged, so "Hippocampus" is one card). Uncheck
+   *Collect clicks* to look around without collecting, or use the star on the
+   region card and the × on each entry to curate the list. *All regions of this
+   atlas* fills the collection in one go.
+2. **Study** – pick a format and what to ask for:
+   - **Flashcards** – recall the answer, flip the card, rate yourself
+     (*Again* / *Knew it*).
+   - **Multiple choice** – four answers, e.g. *Hippocampus → "Forms new memories
+     and supports spatial navigation"*.
+   - **Ask for** – *Function* (region → what it does), *Region* (function → which
+     region), or *Mixed*.
+3. **Master it** – a wrong answer comes back soon, and the round ends once every
+   card is mastered. Afterwards you can practise only your mistakes. Each answer
+   shows the region's function and a short anatomy/clinical note, and the crosshair
+   marks the spot you clicked on the MRI.
+
+**Difficulty** picks the wrong answers in multiple choice: *Easy* draws them from
+other brain areas, *Hard* from the same area, so you have to tell neighbours apart.
+Weak cards come first, and a ✓ marks cards you got right three times in a row.
+
+Your collection and progress are saved in this browser only (`localStorage`);
+nothing is sent anywhere. Works by touch on phones (compact MRI above the card,
+*Study* bar at the bottom while collecting) and by keyboard on desktop (*Space*,
+*1–4*).
 
 ## Difficulty levels & didactic mapping
 

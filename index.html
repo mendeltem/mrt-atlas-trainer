@@ -176,6 +176,78 @@
   body.mobile #expInfo,body.mobile .hint{font-size:13px}
   body.mobile .stat b{font-size:18px}
   body.mobile footer{font-size:9px;line-height:1.55}
+  /* ---- Sammlung & Lernen ---- */
+  #deckBox{margin-top:10px}
+  .deckHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .deckHead .kicker{margin:0}
+  .deckAuto{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .deckAuto input{accent-color:var(--accent2);width:15px;height:15px}
+  #deckEmpty{margin-bottom:10px}
+  #deckList{display:flex;flex-wrap:wrap;gap:6px;max-height:190px;overflow:auto;margin-bottom:10px}
+  .dchip{display:inline-flex;align-items:center;max-width:100%;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding-left:9px;font-size:13px;line-height:1.25}
+  .dchip.known{border-color:var(--ok)}
+  .dchip .dname{padding:4px 0}
+  .dchip .dtag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-left:6px}
+  .dchip button{border:0;background:none;color:var(--muted);font-size:15px;width:26px;height:26px;cursor:pointer;flex-shrink:0}
+  .dchip button:hover{color:var(--bad)}
+  #deckKnown{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px}
+  .deckActions{display:flex;gap:8px}
+  #deckStudy{flex:2}
+  #deckClear{flex:1}
+  .btn:disabled{opacity:.4;cursor:default}
+  #deckAll,#stAll{margin-top:8px;font-size:11px;font-weight:500;padding:8px}
+  #expCollect{margin-top:10px;font-size:12px;padding:9px}
+  #expCollect.in{color:var(--accent);border-color:var(--accent)}
+  #deckBar,#stZoom{display:none}
+  #deckBar.pulse{animation:streakpulse .5s ease}
+
+  #studyPanel{display:flex;flex-direction:column;gap:10px}
+  #stSettings{display:flex;flex-direction:column;gap:7px}
+  #stQ{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;line-height:1.2;color:var(--accent)}
+  #stQ.isFunc{font-size:17px;font-weight:700;line-height:1.35}
+  #stTag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);margin-top:5px}
+  #stOpts{margin-top:12px}
+  #stFeedback{font-family:'JetBrains Mono',monospace;font-size:13px;margin-top:10px}
+  #stFeedback:empty{display:none}
+  #stBack{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--line);
+    border-left:3px solid var(--accent2);animation:fadein .25s ease}
+  .sbName{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;line-height:1.25;color:var(--accent2)}
+  .sbFunc{font-size:15px;line-height:1.4;margin-top:5px;color:var(--ink)}
+  .sbDetail{font-size:13.5px;line-height:1.5;color:var(--muted);margin-top:8px}
+  .sbLinks{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:8px}
+  .sbLinks a{color:var(--accent2)}
+  .sactions{display:flex;gap:8px;margin-top:10px}
+  #stAgain{border-color:var(--bad);color:var(--bad)}
+  #stKnown{background:var(--ok);border-color:var(--ok);color:#06210f}
+  #stKeys{font-family:'JetBrains Mono',monospace;font-size:10px}
+
+  /* Mobil: Moduswahl immer sichtbar, Leiste „Lernen" unten, beim Lernen kleines MRT über der Karte */
+  body.mobile #modeSeg{display:flex}
+  body.mobile #modeSeg button{min-height:40px}
+  body.mobile.deckbar{padding-bottom:66px}
+  body.mobile.deckbar #deckBar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;align-items:center;gap:12px;
+    padding:9px 14px;background:var(--panel2);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(0,0,0,.45)}
+  #deckBarTxt{flex:1;min-width:0;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  #deckBarBtn{width:auto;min-height:44px;padding:9px 16px;flex-shrink:0}
+  body.mobile #deckStudy{display:none}
+  body.mobile #deckList{max-height:none}
+  body.mobile .dchip{font-size:14px}
+  body.mobile .dchip button{width:40px;height:40px;font-size:18px}
+  body.mobile .deckAuto{font-size:11px;min-height:36px}
+  body.mobile #expCollect,body.mobile #deckAll,body.mobile #deckClear,body.mobile #stAll{min-height:44px}
+  body.mobile #stSettings{display:none}
+  body.mobile.stopts-open #stSettings{display:flex}
+  body.mobile.study-on canvas{width:min(44vw,190px)}
+  body.mobile.study-on.study-big canvas{width:min(80vw,400px)}
+  body.mobile.study-on #stZoom{display:flex;align-items:center;justify-content:center;position:absolute;left:10px;top:10px;z-index:7;
+    width:42px;height:42px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink);font-size:18px;cursor:pointer}
+  body.mobile #stQ{font-size:20px}
+  body.mobile #stQ.isFunc{font-size:16px}
+  body.mobile #stOpts .opt{font-size:14px;min-height:48px;padding:10px 12px}
+  body.mobile .sactions .btn{min-height:48px}
+  body.mobile #stRestart,body.mobile #stMore,body.mobile #stRetry,body.mobile #stAgainAll,body.mobile #stGoExplore{min-height:46px}
+  body.mobile #stKeys{display:none}
+  body.mobile .sbDetail{font-size:14px}
 </style>
 </head>
 <body>
@@ -188,6 +260,7 @@
   <div class="seg mob-collapse" id="modeSeg">
     <button data-mode="explore" class="on" data-i18n="m_explore">Erkunden</button>
     <button data-mode="quiz" data-i18n="m_quiz">Quiz</button>
+    <button data-mode="study" data-i18n="m_study">Lernen</button>
   </div>
   <div class="seg mob-collapse" id="levelSeg">
     <button data-level="easy" class="on" data-i18n="lv_easy">Einfach</button>
@@ -229,6 +302,7 @@
       <span class="orient" id="oP" style="bottom:18px;left:50%;transform:translateX(-50%)">P</span>
       <span class="orient" id="oRleft" style="left:18px;top:50%;transform:translateY(-50%)">R</span>
       <span class="orient" id="oLright" style="right:46px;top:50%;transform:translateY(-50%)">L</span>
+      <button id="stZoom" type="button" aria-label="MRT größer/kleiner">⤢</button>
       <canvas id="cv"></canvas>
       <div id="xhair" class="xhair hidden"><span class="ring"></span><span class="dot"></span></div>
       <div id="emarks"></div>
@@ -249,6 +323,21 @@
         <div id="expEn"></div>
         <div id="expInfo">Klick auf eine Stelle im Schnittbild — du bekommst sofort den Regionsnamen (deutsch + AAL). Schieberegler oder Mausrad blättert durch die Schichten; „Atlas“ blendet die Farbe ein/aus.</div>
         <div id="expLinks" class="hidden"></div>
+        <button id="expCollect" class="btn hidden" type="button"></button>
+      </div>
+      <div class="card" id="deckBox">
+        <div class="deckHead">
+          <span class="kicker" id="deckTitle"></span>
+          <label class="deckAuto"><input type="checkbox" id="deckAuto" checked> <span data-i18n="dk_auto"></span></label>
+        </div>
+        <div class="hint" id="deckEmpty" data-i18n="dk_empty"></div>
+        <div id="deckList"></div>
+        <div id="deckKnown" class="hidden" data-i18n="dk_known"></div>
+        <div class="deckActions">
+          <button id="deckStudy" class="btn primary" type="button"></button>
+          <button id="deckClear" class="btn" type="button" data-i18n="dk_clear"></button>
+        </div>
+        <button id="deckAll" class="btn" type="button"></button>
       </div>
       <div id="exHint">Echtes T1-MRT im MNI-Standardraum, vorgerendert in Python. Der farbige Overlay ist der <b>AAL-Atlas</b>. Erst ohne Farbe raten, dann aufdecken.</div>
       <div id="eList"></div>
@@ -318,8 +407,72 @@
         <button class="btn primary" id="qAgain" style="margin-top:12px" data-i18n="q_again">Nochmal</button>
       </div>
     </div>
+
+    <div id="studyPanel" class="hidden">
+      <button id="stOptToggle" class="qOptToggle" type="button"></button>
+      <div id="stSettings">
+        <div class="qset-row"><span class="qset-lbl" data-i18n="st_format"></span>
+          <div class="seg" id="stFormatSeg">
+            <button data-f="cards" data-i18n="st_cards"></button>
+            <button data-f="mc" data-i18n="st_mc"></button>
+          </div></div>
+        <div class="qset-row"><span class="qset-lbl" data-i18n="st_dir"></span>
+          <div class="seg" id="stDirSeg">
+            <button data-dir="fwd" data-i18n="st_fwd"></button>
+            <button data-dir="rev" data-i18n="st_rev"></button>
+            <button data-dir="mix" data-i18n="st_mix"></button>
+          </div></div>
+        <div class="qset-row" id="stDiffRow"><span class="qset-lbl" data-i18n="qs_diff"></span>
+          <div class="seg" id="stDiffSeg">
+            <button data-d="easy" data-i18n="lv_easy"></button>
+            <button data-d="med" data-i18n="lv_med"></button>
+            <button data-d="hard" data-i18n="lv_hard"></button>
+          </div></div>
+      </div>
+      <div class="card" id="stCard">
+        <div class="kicker" id="stKicker"></div>
+        <div id="stQ"></div>
+        <div id="stTag"></div>
+        <div class="opts" id="stOpts"></div>
+        <div id="stFeedback"></div>
+        <div id="stBack" class="hidden"></div>
+        <div class="sactions">
+          <button id="stReveal" class="btn primary" type="button" data-i18n="st_reveal"></button>
+          <button id="stAgain" class="btn hidden" type="button" data-i18n="st_again"></button>
+          <button id="stKnown" class="btn hidden" type="button" data-i18n="st_known"></button>
+          <button id="stNext" class="btn primary hidden" type="button" data-i18n="q_next"></button>
+        </div>
+      </div>
+      <div class="stats" id="stStats">
+        <div class="stat ok"><b id="stCorrect">0</b><span data-i18n="s_correct"></span></div>
+        <div class="stat bad"><b id="stWrong">0</b><span data-i18n="s_wrong"></span></div>
+        <div class="stat"><b id="stLeft">0</b><span data-i18n="s_left"></span></div>
+      </div>
+      <div class="bar" id="stBarWrap"><i id="stBar"></i></div>
+      <div class="card done hidden" id="stDone">
+        <div class="kicker" data-i18n="q_done"></div>
+        <div class="score" id="stScore">0 / 0</div>
+        <div class="hint" id="stVerdict" style="margin-top:6px"></div>
+        <button class="btn primary" id="stRetry" type="button" style="margin-top:12px" data-i18n="st_retry"></button>
+        <button class="btn" id="stAgainAll" type="button" style="margin-top:8px" data-i18n="q_again"></button>
+      </div>
+      <div class="card hidden" id="stEmpty">
+        <div class="kicker" data-i18n="st_empty_k"></div>
+        <div class="hint" data-i18n="st_empty"></div>
+        <button class="btn primary" id="stGoExplore" type="button" style="margin-top:12px" data-i18n="st_goto"></button>
+        <button class="btn" id="stAll" type="button"></button>
+      </div>
+      <button class="btn" id="stRestart" type="button" data-i18n="st_restart"></button>
+      <button class="btn" id="stMore" type="button" data-i18n="st_more"></button>
+      <div class="hint" id="stKeys"></div>
+    </div>
   </aside>
 </main>
+
+<div id="deckBar">
+  <span id="deckBarTxt"></span>
+  <button id="deckBarBtn" class="btn primary" type="button" data-i18n="dk_study"></button>
+</div>
 
 <footer id="footer">Daten: MNI152 (T1) + AAL-Atlas, in Python zu Bildern gerendert. Klick-Erkennung über verlustfreie Label-Karte.<br>
 <b>Didaktik &middot; Quellen je Stufe.</b>
@@ -412,6 +565,15 @@ const T={
    q_done:'Fertig 🧠',q_again:'Nochmal',finished:'Durchlauf beendet',
    v90:'Stark! Sitzt. 🎯',v70:'Gut – noch ein, zwei Runden.',v50:'Solide. Geh die Wackelkandidaten im Erkunden-Modus durch.',v0:'Noch holprig – erst erkunden, dann wieder testen.',
    bg_name:'Hintergrund / außerhalb',bg_info:'Kein Hirngewebe an dieser Stelle.',
+   m_study:'Lernen',dk_title:'Meine Sammlung',dk_auto:'Klicks sammeln',dk_study:'📚 Lernen',dk_clear:'Leeren',dk_remove:'Entfernen',
+   dk_empty:'Klick dich durchs MRT – jede angeklickte Region landet hier. Danach mit „Lernen" Karteikarten und Multiple Choice dazu starten.',
+   dk_clear_q:'Sammlung und Lernstand wirklich löschen?',dk_all:'＋ Alle Regionen dieses Atlas ({n})',dk_in:'★ Gesammelt – entfernen',dk_add:'☆ Zur Sammlung',
+   dk_known:'✓ = 3× in Folge richtig',dk_count:'{n} gesammelt',
+   st_opts:'⚙ Optionen',st_format:'Format',st_cards:'Karteikarten',st_mc:'Multiple Choice',st_dir:'Gefragt',st_fwd:'Funktion',st_rev:'Region',st_mix:'Gemischt',
+   st_ask_fwd:'Was macht diese Struktur?',st_ask_rev:'Welche Struktur passt dazu?',st_reveal:'Antwort zeigen',st_again:'✗ Nochmal',st_known:'✓ Gewusst',
+   st_wrong:'✗ Falsch – kommt gleich nochmal',st_retry:'Nur Fehler üben',st_restart:'Neu starten',st_more:'＋ Mehr sammeln',st_goto:'Zum Erkunden',
+   st_empty_k:'Lernen · noch leer',st_empty:'Noch nichts gesammelt. Klick im Modus „Erkunden" auf Hirnregionen – sie landen automatisch in deiner Sammlung.',
+   st_keys_mc:'Tastatur: 1–4 = Antwort · Leertaste = weiter',st_keys_cards:'Tastatur: Leertaste = umdrehen · 1 = Nochmal · 2 = Gewusst',
    footer_html:'<b>Quellen</b> — Atlanten: AAL (Automated Anatomical Labeling, Tzourio-Mazoyer et al., NeuroImage 2002) und Harvard-Oxford (Desikan et al. 2006; Makris et al. 2006), Teil von FSL – FMRIB Software Library (fsl.fmrib.ox.ac.uk). MRT-Vorlage: MNI152 (ICBM 152, nonlinear 2009). Bilddaten via NiiVue/GitHub, in Python zu Slices vorgerendert und auf die Hirnmaske beschnitten.'},
  en:{sub:'MNI152 · AAL & Harvard-Oxford · pre-rendered',m_explore:'Explore',m_quiz:'Quiz',
    tb_slice:'Slice',tb_atlas:'Opacity',sliceWord:'Slice',
@@ -436,6 +598,15 @@ const T={
    q_done:'Done 🧠',q_again:'Again',finished:'Round complete',
    v90:'Strong! You\u2019ve got it. 🎯',v70:'Good – one or two more rounds.',v50:'Solid. Review the tricky ones in Explore mode.',v0:'Still shaky – explore first, then test again.',
    bg_name:'Background / outside',bg_info:'No brain tissue here.',
+   m_study:'Study',dk_title:'My collection',dk_auto:'Collect clicks',dk_study:'📚 Study',dk_clear:'Clear',dk_remove:'Remove',
+   dk_empty:'Click through the MRI – every region you click lands here. Then hit "Study" for flashcards and multiple choice on them.',
+   dk_clear_q:'Really delete your collection and learning progress?',dk_all:'＋ All regions of this atlas ({n})',dk_in:'★ Collected – remove',dk_add:'☆ Add to collection',
+   dk_known:'✓ = right 3× in a row',dk_count:'{n} collected',
+   st_opts:'⚙ Options',st_format:'Format',st_cards:'Flashcards',st_mc:'Multiple choice',st_dir:'Ask for',st_fwd:'Function',st_rev:'Region',st_mix:'Mixed',
+   st_ask_fwd:'What does this structure do?',st_ask_rev:'Which structure fits this?',st_reveal:'Show answer',st_again:'✗ Again',st_known:'✓ Knew it',
+   st_wrong:'✗ Wrong – will come back soon',st_retry:'Practise mistakes only',st_restart:'Restart',st_more:'＋ Collect more',st_goto:'Go to Explore',
+   st_empty_k:'Study · still empty',st_empty:'Nothing collected yet. Click brain regions in Explore mode – they land in your collection automatically.',
+   st_keys_mc:'Keyboard: 1–4 = answer · Space = next',st_keys_cards:'Keyboard: Space = flip · 1 = Again · 2 = Knew it',
    footer_html:'<b>Sources</b> — Atlases: AAL (Automated Anatomical Labeling, Tzourio-Mazoyer et al., NeuroImage 2002) and Harvard-Oxford (Desikan et al. 2006; Makris et al. 2006), part of FSL – FMRIB Software Library (fsl.fmrib.ox.ac.uk). MRI template: MNI152 (ICBM 152, nonlinear 2009). Image data via NiiVue/GitHub, pre-rendered to slices in Python and clipped to the brain mask.'}
 };
 
@@ -571,6 +742,7 @@ function buildOffscreen(){
   K=Math.max(3, Math.round(680/cellH)); DW=cellW*K; DH=cellH*K;
   cv.width=DW; cv.height=DH;
   ready=true; applyView();
+  if(mode==='study'){ placeStudyMarker(); draw(); }
 }
 // Aktive Ansicht (Sprites, Schicht-Positionen, Repräsentanten, Marker) setzen
 function applyView(){
@@ -595,10 +767,11 @@ function setView(v){
   if(v===view||!ORIENT[v])return;
   view=v;
   applyView();                                   // Geometrie/Sprites der neuen Ansicht
-  if(marker&&marker.w){ const c=worldToCell(marker.w,view); marker.col=c.col;marker.row=c.row;marker.s=c.s; }
+  if(mode==='study') placeStudyMarker();
+  else if(marker&&marker.w){ const c=worldToCell(marker.w,view); marker.col=c.col;marker.row=c.row;marker.s=c.s; }
   for(const m of emarks){ if(m.w){ const c=worldToCell(m.w,view); m.col=c.col;m.row=c.row;m.s=c.s; } }
   let js=null;
-  if(mode==='quiz'&&marker) js=marker.s;
+  if(mode!=='explore'&&marker) js=marker.s;
   else if(emarks.length) js=emarks[emarks.length-1].s;
   if(js!=null){ cur=js; $('slice').value=cur; }
   renderEList(); draw();
@@ -666,7 +839,7 @@ function updateSliceTick(){
   cont.innerHTML='';
   const col=$('sliceCol'); if(!col){cont.style.display='none';return;}
   let list=[];
-  if(mode==='quiz'){ if(marker&&marker.s!=null) list=[{s:marker.s,color:'var(--accent)'}]; }
+  if(mode!=='explore'){ if(marker&&marker.s!=null) list=[{s:marker.s,color:'var(--accent)'}]; }
   else { list=emarks.map(m=>({s:m.s,color:m.color})); }
   if(!list.length||n<2){ cont.style.display='none'; return; }
   const H=col.clientHeight, pad=10; cont.style.display='block';
@@ -838,6 +1011,7 @@ function resetExplore(){
   $('expName').style.color='';
   $('expName').textContent=T[LANG].ex_name0; $('expEn').textContent=''; $('expInfo').textContent='';
   $('expLinks').innerHTML=''; $('expLinks').classList.add('hidden');
+  renderDeck();
 }
 
 let swiped=false;
@@ -852,11 +1026,13 @@ cv.addEventListener('click',e=>{
       if(emarks.length>=5) emarks.shift();                   // max 5 (ältestes raus)
       const oc=overlayColor(idx);
       const color=oc?('rgb('+oc[0]+','+oc[1]+','+oc[2]+')'):'#e8e8e8';
-      emarks.push({col:loc.col,row:loc.row,s:cur,idx,color,w:cellToWorld(loc.col,loc.row,cur,view)});
+      const w=cellToWorld(loc.col,loc.row,cur,view);
+      emarks.push({col:loc.col,row:loc.row,s:cur,idx,color,w});
+      if(deckAuto) addToDeck(atlas,idx,w);
     }
     marker=null;
     if(emarks.length) showExplore(emarks[emarks.length-1].idx); else resetExplore();
-    renderEList(); draw(); return;
+    renderDeck(); renderEList(); draw(); return;
   }
   if(mode==='quiz'&&quiz&&quiz.curType==='finden'&&!quiz.locked){ handleFind(e); }
 });
@@ -1030,7 +1206,7 @@ const DETAIL={
  Brainstem:{de:'Der Hirnstamm (Mittelhirn, Brücke, verlängertes Mark) steuert lebenswichtige Funktionen wie Atmung, Kreislauf und Wachheit und enthält die Ursprungskerne der Hirnnerven. Er ist Durchgang für alle auf- und absteigenden Bahnen.',en:'The brainstem (midbrain, pons, medulla) controls vital functions such as breathing, circulation and arousal and contains the cranial nerve nuclei. It is the conduit for all ascending and descending pathways.'}
 };
 /* HO-Atlas-Index -> DETAIL-Schlüssel (wo eine sinnvolle Entsprechung existiert) */
-const HO_DETAIL_KEY={1:'Frontal_Sup',2:'Insula',3:'Frontal_Sup',4:'Frontal_Mid',5:'Frontal_Inf_Tri',6:'Frontal_Inf_Oper',7:'Precentral',8:'Temporal_Pole_Sup',9:'Temporal_Sup',10:'Temporal_Sup',11:'Temporal_Mid',12:'Temporal_Mid',13:'Temporal_Mid',14:'Temporal_Inf',15:'Temporal_Inf',16:'Temporal_Inf',17:'Postcentral',18:'Parietal_Sup',19:'SupraMarginal',20:'SupraMarginal',21:'Angular',22:'Occipital_Mid',23:'Occipital_Inf',24:'Calcarine',25:'Frontal_Sup_Medial',26:'Supp_Motor_Area',27:'Frontal_Med_Orb',29:'Cingulum_Ant',30:'Cingulum_Post',31:'Precuneus',32:'Cuneus',33:'Frontal_Med_Orb',34:'ParaHippocampal',35:'ParaHippocampal',36:'Lingual',37:'Fusiform',38:'Fusiform',39:'Fusiform',41:'Fusiform',42:'Heschl',45:'Heschl',48:'Calcarine',49:'Thalamus',51:'Caudate',53:'Putamen',55:'Pallidum',57:'Hippocampus',59:'Amygdala',61:'Accumbens',63:'Brainstem'};
+const HO_DETAIL_KEY={1:'Frontal_Sup',2:'Insula',3:'Frontal_Sup',4:'Frontal_Mid',5:'Frontal_Inf_Tri',6:'Frontal_Inf_Oper',7:'Precentral',8:'Temporal_Pole_Sup',9:'Temporal_Sup',10:'Temporal_Sup',11:'Temporal_Mid',12:'Temporal_Mid',13:'Temporal_Mid',14:'Temporal_Inf',15:'Temporal_Inf',16:'Temporal_Inf',17:'Postcentral',18:'Parietal_Sup',19:'SupraMarginal',20:'SupraMarginal',21:'Angular',22:'Occipital_Mid',23:'Occipital_Inf',24:'Calcarine',25:'Frontal_Sup_Medial',26:'Supp_Motor_Area',27:'Frontal_Med_Orb',29:'Cingulum_Ant',30:'Cingulum_Post',31:'Precuneus',32:'Cuneus',33:'Frontal_Med_Orb',34:'ParaHippocampal',35:'ParaHippocampal',36:'Lingual',37:'Fusiform',38:'Fusiform',39:'Fusiform',40:'Fusiform',42:'Rolandic_Oper',45:'Heschl',48:'Calcarine',49:'Thalamus',51:'Caudate',53:'Putamen',55:'Pallidum',57:'Hippocampus',59:'Amygdala',61:'Accumbens',63:'Brainstem'};
 
 /* Liefert den ausführlichen Beschreibungstext zur aktuellen Region (oder '') */
 function regionDetail(idx){
@@ -1187,10 +1363,12 @@ $('modeSeg').addEventListener('click',e=>{
   b.classList.add('on'); mode=b.dataset.mode; saveState();
   $('explorePanel').classList.toggle('hidden',mode!=='explore');
   $('quizPanel').classList.toggle('hidden',mode!=='quiz');
-  marker=null; clearEmarks();
+  $('studyPanel').classList.toggle('hidden',mode!=='study');
+  marker=null; clearEmarks(); syncStudyLayout(); renderDeck();
   if(mode==='quiz'){
     quiz=null; buildQuiz();
-  }else{setOpacity(0.45);draw();}
+  }else if(mode==='study'){ startStudy(); }
+  else{setOpacity(0.45);draw();}
 });
 function startQuiz(){ buildQuiz(); }
 function renderQSettings(){
@@ -1442,6 +1620,8 @@ function applyLang(L){
   renderQSettings();
   if(mode==='explore'){ if(lastIdx!=null)showExplore(lastIdx); else resetExplore(); }
   if(mode==='quiz'&&quiz){ buildQuiz(); }
+  renderStudySettings(); renderDeck();
+  if(mode==='study'&&study) showStudyCard();
   if(ready)draw();
   saveState();
 }
@@ -1455,7 +1635,8 @@ function setAtlas(a){
   marker=null; lastIdx=null; clearEmarks();
   if(mode==='quiz'){
     quiz=null; buildQuiz();
-  }else{ resetExplore(); }
+  }else if(mode==='study'){ placeStudyMarker(); }
+  else{ resetExplore(); }
   if(ready)draw();
 }
 // Marker behalten, aber die Region (idx) aus dem aktuellen Atlas neu bestimmen
@@ -1472,10 +1653,395 @@ function applyLevel(){
   renderQSettings();
   marker=null; lastIdx=null; clearEmarks();
   if(mode==='quiz'){ quiz=null; buildQuiz(); }
+  else if(mode==='study'){ startStudy(); }
   else { resetExplore(); }
   if(ready)draw(); saveState();
 }
 $('levelSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b||b.dataset.level===level)return; level=b.dataset.level; applyLevel(); closeMenuMobile();});
+
+/* ---------------- SAMMLUNG & LERNEN ----------------
+   Angeklickte Regionen (L/R zusammengefasst) landen in einer Sammlung; daraus werden Karteikarten
+   und Multiple-Choice-Tests zur Funktion. Eine Region = eine Karte, unabhängig vom Level.
+   Die Schwierigkeit steuert nur die Falschantworten: Einfach = anderer Hirnbereich, Schwer = gleicher. */
+const STUDY_FUNC={
+ Frontal_Sup_Orb:{de:'bewertet Belohnung und unterstützt die Impulskontrolle',en:'evaluates reward and supports impulse control'},
+ Frontal_Mid_Orb:{de:'verarbeitet Belohnungswert und Entscheidungen',en:'processes reward value and decision-making'},
+ Frontal_Inf_Oper:{de:'plant die Artikulation; links Teil des Broca-Areals',en:"plans articulation; on the left part of Broca's area"},
+ Frontal_Inf_Orb:{de:'ist an Sprache, Emotion und Bewertung beteiligt',en:'contributes to language, emotion and valuation'},
+ Frontal_Sup_Medial:{de:'ist an sozialer Kognition und Selbstbezug beteiligt',en:'is involved in social cognition and self-reference'},
+ Frontal_Med_Orb:{de:'wägt Belohnung und Risiko für emotionsgeleitete Entscheidungen ab',en:'weighs reward and risk for emotion-guided decisions'},
+ Cingulum_Mid:{de:'verbindet Emotion mit Handlungsauswahl; affektive Seite des Schmerzes',en:'links emotion to action selection; affective side of pain'},
+ Occipital_Sup:{de:'verarbeitet Bewegung und Raum beim Sehen (dorsaler „Wo"-Pfad)',en:'processes motion and space in vision (dorsal "where" pathway)'},
+ Occipital_Inf:{de:'trägt zur Objekterkennung bei (ventraler „Was"-Pfad)',en:'contributes to object recognition (ventral "what" pathway)'},
+ Temporal_Pole_Sup:{de:'verknüpft Wahrnehmung mit Emotion und sozialem Wissen',en:'links perception with emotion and social knowledge'},
+ Temporal_Pole_Mid:{de:'speichert Begriffswissen (semantisches Gedächtnis)',en:'stores conceptual knowledge (semantic memory)'},
+ Vermis:{de:'steuert Rumpfstabilität und Gang',en:'controls trunk stability and gait'},
+ Accumbens:{de:'ist ein Kern des Belohnungssystems (Motivation, Sucht)',en:'is a hub of the reward system (motivation, addiction)'},
+ Brainstem:{de:'steuert vitale Funktionen wie Atmung und Kreislauf',en:'controls vital functions such as breathing and circulation'}};
+/* Harvard-Oxford: genauer als die Sammel-Zuordnung über HO_DETAIL_KEY */
+const HO_STUDY_FUNC={
+ 9:{de:'verarbeitet Klänge und Sprachlaute',en:'processes sounds and speech sounds'},
+ 28:{de:'unterstützt Mentalisieren und kognitive Kontrolle',en:'supports mentalising and cognitive control'},
+ 41:{de:'enthält primäre Geschmacksrinde; beteiligt am Sprechen',en:'contains primary taste cortex; contributes to speech'},
+ 43:{de:'enthält den sekundären somatosensiblen Kortex (S2)',en:'holds the secondary somatosensory cortex (S2)'},
+ 44:{de:'verarbeitet komplexe Klänge wie Musik und Sprachmelodie',en:'processes complex sounds such as music and speech melody'},
+ 46:{de:'verarbeitet Sprachlaute; links Teil des Wernicke-Areals',en:"processes speech sounds; on the left part of Wernicke's area"},
+ 47:{de:'gehört zum primären Sehkortex (V1)',en:'belongs to the primary visual cortex (V1)'}};
+/* Weiße Substanz (JHU), nach englischem g2-Namen */
+const WM_FUNC={
+ 'Middle cerebellar peduncle':{de:'leitet Signale von der Brücke (Pons) zum Kleinhirn',en:'carries input from the pons to the cerebellum'},
+ 'Pontine crossing tract':{de:'kreuzt in der Brücke und verbindet Brückenkerne mit der Gegenseite des Kleinhirns',en:'crosses the pons, linking pontine nuclei to the opposite cerebellar hemisphere'},
+ 'Genu of corpus callosum':{de:'verbindet die präfrontalen Rinden beider Hemisphären',en:'connects the prefrontal cortices of both hemispheres'},
+ 'Body of corpus callosum':{de:'verbindet motorische und parietale Areale beider Hemisphären',en:'connects motor and parietal areas of both hemispheres'},
+ 'Splenium of corpus callosum':{de:'verbindet Okzipital- und hintere Temporalrinden beider Hemisphären',en:'connects the occipital and posterior temporal cortices of both hemispheres'},
+ 'Fornix (column & body)':{de:'leitet Hippocampus-Signale zu den Mammillarkörpern (Gedächtnis)',en:'carries hippocampal output to the mammillary bodies (memory)'},
+ 'Corticospinal tract':{de:'leitet willkürliche Bewegungsbefehle vom Kortex zum Rückenmark',en:'carries voluntary motor commands from cortex to spinal cord'},
+ 'Medial lemniscus':{de:'leitet Feinberührung und Lagesinn zum Thalamus',en:'carries fine touch and proprioception to the thalamus'},
+ 'Inferior cerebellar peduncle':{de:'leitet Rückenmarks- und Gleichgewichtssignale zum Kleinhirn',en:'carries spinal and vestibular input to the cerebellum'},
+ 'Superior cerebellar peduncle':{de:'leitet Kleinhirn-Ausgangssignale zu Mittelhirn und Thalamus',en:'carries cerebellar output to the midbrain and thalamus'},
+ 'Cerebral peduncle':{de:'führt absteigende motorische Bahnen durch das Mittelhirn',en:'carries descending motor fibres through the midbrain'},
+ 'Anterior limb of internal capsule':{de:'verbindet Thalamus und Präfrontalkortex',en:'links thalamus and prefrontal cortex'},
+ 'Posterior limb of internal capsule':{de:'führt die Pyramidenbahn und aufsteigende sensible Fasern',en:'carries the corticospinal tract and ascending sensory fibres'},
+ 'Retrolenticular internal capsule':{de:'führt die Sehstrahlung hinter dem Linsenkern entlang',en:'carries the optic radiation behind the lentiform nucleus'},
+ 'Anterior corona radiata':{de:'fächert thalamische und frontale Fasern zum Präfrontalkortex auf',en:'fans out thalamic and frontal fibres to the prefrontal cortex'},
+ 'Superior corona radiata':{de:'fächert motorische und sensible Fasern zur Zentralregion auf',en:'fans out motor and sensory fibres to the central region'},
+ 'Posterior corona radiata':{de:'fächert Fasern zur parietalen und okzipitalen Rinde auf',en:'fans out fibres to parietal and occipital cortex'},
+ 'Posterior thalamic radiation':{de:'verbindet Thalamus mit okzipitaler und parietaler Rinde (inkl. Sehstrahlung)',en:'links thalamus with occipital and parietal cortex (including the optic radiation)'},
+ 'Sagittal stratum':{de:'bündelt Seh- und temporookzipitale Fasern (Sehstrahlung, ILF, IFOF)',en:'bundles visual and temporo-occipital fibres (optic radiation, ILF, IFOF)'},
+ 'External capsule':{de:'enthält kortikostriatale und Assoziationsfasern seitlich des Putamen',en:'contains corticostriatal and association fibres lateral to the putamen'},
+ 'Cingulum (cingulate gyrus)':{de:'verbindet den Gyrus cinguli mit Frontal- und Parietalrinde (Aufmerksamkeit, Emotion)',en:'links the cingulate with frontal and parietal cortex (attention, emotion)'},
+ 'Cingulum (hippocampus)':{de:'verbindet die Cingulum-Region mit dem Hippocampus (Gedächtnis)',en:'links the cingulate region to the hippocampus (memory)'},
+ 'Fornix/stria terminalis':{de:'leitet Ausgangssignale von Hippocampus und Amygdala (Gedächtnis, Emotion)',en:'carries hippocampal and amygdala output (memory, emotion)'},
+ 'Superior longitudinal fasciculus':{de:'verbindet Frontal- und Parietalrinde (Aufmerksamkeit, Sprache, Handlung)',en:'links frontal and parietal cortex (attention, language, action)'},
+ 'Superior fronto-occipital fasc.':{de:'zieht von frontal nach parietal/okzipital (räumliche Aufmerksamkeit; anatomisch umstritten)',en:'runs from frontal to parietal/occipital regions (spatial attention; anatomically debated)'},
+ 'Uncinate fasciculus':{de:'verbindet Orbitofrontalkortex und vorderen Temporallappen (Emotion, semantisches Gedächtnis)',en:'links orbitofrontal cortex and anterior temporal lobe (emotion, semantic memory)'},
+ 'Tapetum':{de:'verbindet über den Balkenwulst die beiden Temporallappen',en:'connects the temporal lobes via the splenium of the corpus callosum'},
+ 'Anterior thalamic radiation':{de:'verbindet Thalamus und Präfrontalkortex (exekutive Funktionen)',en:'links thalamus and prefrontal cortex (executive function)'},
+ 'Forceps major':{de:'verbindet über den Balkenwulst die Okzipitallappen (Sehen)',en:'connects the occipital lobes via the splenium (vision)'},
+ 'Forceps minor':{de:'verbindet über das Balkenknie die Präfrontalrinden',en:'connects the prefrontal cortices via the genu'},
+ 'Inferior fronto-occipital fasciculus':{de:'verbindet Okzipital- und Frontalrinde (semantische Sprachverarbeitung)',en:'links occipital and frontal cortex (semantic language processing)'},
+ 'Inferior longitudinal fasciculus':{de:'verbindet Okzipital- und vordere Temporalrinde (visuelles Erkennen)',en:'links occipital and anterior temporal cortex (visual recognition)'},
+ 'Superior longitudinal fasciculus (temporal)':{de:'verbindet frontale und temporale Sprachareale (Fasciculus arcuatus)',en:'links frontal and temporal language areas (arcuate fasciculus)'}};
+
+const DECK_KEY='mrtAtlasTrainer.deck.v1', KNOWN_BOX=3;
+let deck=[], deckBox={}, deckAuto=true, _deckPulse=false;
+let study=null, stFormat='mc', stDir='fwd';
+const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
+
+function withAtlas(a,fn){ const s=atlas; atlas=a; try{ return fn(); }finally{ atlas=s; } }
+// HO: rechte subkortikale Labels (gerade 50..62) auf das linke Gegenstück abbilden
+function hoCanon(i){ return (i>=50&&i<=62&&i%2===0)?i-1:i; }
+function deckKey(a,i){
+  if(a==='aal') return 'aal:'+coreKey(labels[i]);
+  if(a==='ho') return 'ho:'+hoCanon(i);
+  const g=META[a].g2, gi=g?g.id[i]:-1;
+  return a+':'+(gi>=0?'g'+gi:i);
+}
+function saveDeck(){ try{ localStorage.setItem(DECK_KEY, JSON.stringify({items:deck,box:deckBox,auto:deckAuto,format:stFormat,dir:stDir})); }catch(e){} }
+function loadDeck(){
+  let s={}; try{ s=JSON.parse(localStorage.getItem(DECK_KEY))||{}; }catch(e){}
+  const seen=new Set();
+  deck=(Array.isArray(s.items)?s.items:[]).filter(d=>d&&VW.atlases[d.atlas]&&Number.isInteger(d.idx)&&d.idx>0).map(d=>{
+    const k=deckKey(d.atlas,d.idx); if(seen.has(k)) return null; seen.add(k);
+    return {k,atlas:d.atlas,idx:d.idx,w:d.w||null};
+  }).filter(Boolean);
+  deckBox=s.box&&typeof s.box==='object'?s.box:{};
+  if(typeof s.auto==='boolean') deckAuto=s.auto;
+  if(s.format==='cards'||s.format==='mc') stFormat=s.format;
+  if(['fwd','rev','mix'].includes(s.dir)) stDir=s.dir;
+}
+function addToDeck(a,idx,w){
+  const k=deckKey(a,idx);
+  if(deck.some(d=>d.k===k)) return false;
+  deck.push({k,atlas:a,idx,w:w||null}); _deckPulse=true; saveDeck(); return true;
+}
+function removeFromDeck(k){ deck=deck.filter(d=>d.k!==k); delete deckBox[k]; saveDeck(); renderDeck(); }
+// Regionen des aktuellen Atlas, die noch nicht in der Sammlung sind (eine je Karte)
+function missingRegions(){
+  const rep=VW.atlases[atlas][view].rep, have=new Set(deck.map(d=>d.k)), out=[];
+  for(const i of A().quiz){ if(!rep[i]) continue; const k=deckKey(atlas,i); if(have.has(k)) continue; have.add(k); out.push(i); }
+  return out;
+}
+function addAllRegions(){ missingRegions().forEach(i=>addToDeck(atlas,i,null)); renderDeck(); }
+// Funktion einer Region im aktuellen Atlas (kurz, ohne Schlusspunkt)
+function studyFunc(i){
+  if(isExtra(atlas)){
+    const g=META[atlas].g2, w=g&&WM_FUNC[g.en[g.id[i]]];
+    return w?w[LANG]:clusterInfo(i).replace(/\.$/,'');
+  }
+  let k;
+  if(atlas==='ho'){ const c=hoCanon(i), h=HO_STUDY_FUNC[c]||HO_FUNC[c]; if(h) return h[LANG]; k=HO_DETAIL_KEY[c]; }
+  else k=coreKey(labels[i]);
+  const m=(LANG==='de'?FUNC:EN_FUNC)[k]||(STUDY_FUNC[k]&&STUDY_FUNC[k][LANG]);
+  return m||clusterInfo(i).replace(/\.$/,'');
+}
+function cardInfo(it){
+  return withAtlas(it.atlas,()=>{
+    const i=atlas==='ho'?hoCanon(it.idx):it.idx, full=mergedName(i);
+    // Name ohne Funktions-Zusatz, sonst verrät die Frage schon die Antwort ("… – primärer Motorkortex")
+    const name=isExtra(atlas)?full:full.replace(/\s*[–—](?!\s*pars\b).*$/i,'').replace(/\s*\([^)]*\)/g,'').trim();
+    return {name,full,group:clusterLabel(i)||'',func:studyFunc(i),detail:regionDetail(i),links:regionLinks(i)};
+  });
+}
+let _studyPool={};
+function studyPool(a){
+  const key=a+'|'+LANG;
+  if(_studyPool[key]) return _studyPool[key];
+  const cnt=a==='aal'?labels.length:a==='ho'?HO_EN.length:XATL[a].en.length, out=[], seen=new Set();
+  for(let i=1;i<cnt;i++){
+    if(a==='aal'&&(!labels[i]||labels[i]==='Air')) continue;
+    const k=deckKey(a,i); if(seen.has(k)) continue; seen.add(k);
+    const c=cardInfo({atlas:a,idx:i}); out.push({k,name:c.name,func:c.func,group:c.group});
+  }
+  return _studyPool[key]=out;
+}
+// 3 Falschantworten: bevorzugt aus der eigenen Sammlung, Rest aus dem Atlas
+function studyDistractors(it,c,field){
+  const usable=x=>x.k!==it.k&&x.func&&x.func!==c.func&&x.name!==c.name;
+  const mine=shuffle(study.items.filter(x=>x.atlas===it.atlas).map(x=>{const d=cardInfo(x);return {k:x.k,name:d.name,func:d.func,group:d.group};}).filter(usable));
+  const rest=shuffle(studyPool(it.atlas).filter(usable));
+  let cand=mine.slice(0,2).concat(rest,mine.slice(2));
+  if(level!=='med'&&c.group){
+    const same=level==='hard', hit=x=>(x.group===c.group)===same;
+    cand=cand.filter(hit).concat(cand.filter(x=>!hit(x)));
+  }
+  const seen=new Set([c[field]]), out=[];
+  for(const x of cand){ if(seen.has(x[field])) continue; seen.add(x[field]); out.push(x[field]); if(out.length===3) break; }
+  return out;
+}
+
+function renderDeck(){
+  const cnt=deck.length, L=T[LANG], box=$('deckList');
+  $('deckTitle').textContent=L.dk_title+' · '+cnt;
+  $('deckEmpty').classList.toggle('hidden',cnt>0);
+  box.innerHTML='';
+  const multi=new Set(deck.map(d=>d.atlas)).size>1;
+  for(let k=cnt-1;k>=0;k--){
+    const d=deck[k], chip=document.createElement('span'), known=(deckBox[d.k]||0)>=KNOWN_BOX;
+    chip.className='dchip'+(known?' known':'');
+    const nm=document.createElement('span'); nm.className='dname'; nm.textContent=(known?'✓ ':'')+cardInfo(d).name; chip.appendChild(nm);
+    if(multi){ const t=document.createElement('span'); t.className='dtag'; t.textContent=d.atlas==='aal'?'AAL':d.atlas==='ho'?'HO':XATL[d.atlas].name; chip.appendChild(t); }
+    const x=document.createElement('button'); x.type='button'; x.dataset.k=d.k; x.textContent='×'; x.setAttribute('aria-label',L.dk_remove); chip.appendChild(x);
+    box.appendChild(chip);
+  }
+  box.classList.toggle('hidden',!cnt);
+  $('deckKnown').classList.toggle('hidden',!deck.some(d=>(deckBox[d.k]||0)>=KNOWN_BOX));
+  $('deckStudy').disabled=!cnt; $('deckStudy').textContent=L.dk_study+(cnt?' ('+cnt+')':'');
+  $('deckClear').classList.toggle('hidden',!cnt);
+  $('deckAuto').checked=deckAuto;
+  const miss=missingRegions().length, allTxt=L.dk_all.replace('{n}',miss);
+  ['deckAll','stAll'].forEach(id=>{ $(id).textContent=allTxt; $(id).classList.toggle('hidden',!miss); });
+  // Mobil: Leiste am unteren Rand, damit „Lernen" beim Klicken im MRT erreichbar bleibt
+  const bar=$('deckBar'), showBar=mode==='explore'&&cnt>0;
+  document.body.classList.toggle('deckbar',showBar);
+  $('deckBarTxt').textContent=L.dk_count.replace('{n}',cnt);
+  if(_deckPulse&&showBar){ bar.classList.remove('pulse'); void bar.offsetWidth; bar.classList.add('pulse'); }
+  _deckPulse=false;
+  const st=$('expCollect'), has=mode==='explore'&&lastIdx>0;
+  st.classList.toggle('hidden',!has);
+  if(has){ const on=deck.some(d=>d.k===deckKey(atlas,lastIdx)); st.classList.toggle('in',on); st.textContent=L[on?'dk_in':'dk_add']; }
+}
+
+function setMode(m){ document.querySelector('#modeSeg button[data-mode="'+m+'"]').click(); }
+function syncStudyLayout(){
+  document.body.classList.toggle('study-on',mode==='study');
+  if(mode!=='study') document.body.classList.remove('study-big');
+  syncSlice();
+}
+function renderStudySettings(){
+  document.querySelectorAll('#stFormatSeg button').forEach(b=>b.classList.toggle('on',b.dataset.f===stFormat));
+  document.querySelectorAll('#stDirSeg button').forEach(b=>b.classList.toggle('on',b.dataset.dir===stDir));
+  document.querySelectorAll('#stDiffSeg button').forEach(b=>b.classList.toggle('on',b.dataset.d===level));
+  $('stDiffRow').classList.toggle('hidden',stFormat!=='mc');
+  $('stKeys').textContent=T[LANG][stFormat==='mc'?'st_keys_mc':'st_keys_cards'];
+  $('stOptToggle').textContent=T[LANG].st_opts+(document.body.classList.contains('stopts-open')?' ▴':' ▾');
+}
+function studyShow(part){   // 'empty' | 'card' | 'done'
+  $('stEmpty').classList.toggle('hidden',part!=='empty');
+  $('stDone').classList.toggle('hidden',part!=='done');
+  ['stCard','stStats','stBarWrap','stRestart','stKeys'].forEach(id=>$(id).classList.toggle('hidden',part!=='card'));
+  ['stSettings','stOptToggle','stMore'].forEach(id=>$(id).classList.toggle('hidden',part==='empty'));
+}
+function startStudy(items){
+  renderStudySettings();
+  const src=items||deck;
+  if(!src.length){ study=null; marker=null; studyShow('empty'); setOpacity(0.45); draw(); return; }
+  // schwache Karten zuerst
+  const queue=shuffle(src.slice()).sort((a,b)=>(deckBox[a.k]||0)-(deckBox[b.k]||0));
+  study={items:deck.slice(),queue,total:queue.length,mastered:new Set(),firstWrong:new Set(),wrongClicks:0,cur:null,dir:'fwd',answered:false,revealed:false,lastOk:false};
+  showStudyCard();
+}
+// Punkt sicher in der Region: nächster Regionspixel zur Klickstelle, ohne Klickstelle die Mitte der größten Schicht.
+// (Die rep-Punkte taugen hier nicht: bei beidseitigen Labels liegt ihr Schwerpunkt oft auf der Mittellinie.)
+function regionCell(it){
+  const o=ORIENT[view], f=FOV[view], mm=Math.abs(f.h[1]-f.h[0])/cellW, mask=new Uint8Array(256);
+  for(let i=1;i<256;i++) mask[i]=deckKey(it.atlas,i)===it.k?1:0;
+  const lc=labV[it.atlas][view], img=lc.getImageData(0,0,lc.canvas.width,lc.canvas.height), d=img.data, W=img.width;
+  const each=(s,fn)=>{ const [sx,sy]=srcXY(s);
+    for(let row=0;row<cellH;row++) for(let col=0;col<cellW;col++) if(mask[d[((sy+row)*W+sx+col)*4]]) fn(col,row); };
+  const t=it.w?worldToCell(it.w,view):null;
+  let best=null, bd=Infinity;
+  if(t){
+    for(let s=0;s<o.n;s++){ const dz=o.sliceMM[s]-o.sliceMM[t.s];
+      each(s,(col,row)=>{ const x=(col-t.col)*mm, y=(row-t.row)*mm, q=x*x+y*y+dz*dz; if(q<bd){ bd=q; best={col,row,s}; } }); }
+    return best;
+  }
+  let big=-1, bigN=0;
+  for(let s=0;s<o.n;s++){ let c=0; each(s,()=>c++); if(c>bigN){ bigN=c; big=s; } }
+  if(big<0) return null;
+  // Beidseitige Regionen: Mitte der volleren Bildhälfte, sonst läge sie zwischen den Hemisphären
+  const half=[{n:0,x:0,y:0},{n:0,x:0,y:0}];
+  each(big,(col,row)=>{ const h=half[col<cellW/2?0:1]; h.n++; h.x+=col; h.y+=row; });
+  const h=half[0].n>=half[1].n?half[0]:half[1], cx=h.x/h.n, cy=h.y/h.n;
+  each(big,(col,row)=>{ const q=(col-cx)**2+(row-cy)**2; if(q<bd){ bd=q; best={col,row,s:big}; } });
+  return best;
+}
+// Marker an der eigenen Klickstelle; fällt die Projektion in eine andere Ansicht neben die Region -> regionCell
+function placeStudyMarker(){
+  const it=study&&study.cur; if(!it){ marker=null; return; }
+  let c=it.w?worldToCell(it.w,view):null;
+  if(ready){
+    const onRegion=c&&(()=>{ const [sx,sy]=srcXY(c.s); return deckKey(it.atlas,labV[it.atlas][view].getImageData(sx+c.col,sy+c.row,1,1).data[0])===it.k; })();
+    if(!onRegion) c=regionCell(it)||c;
+  }
+  if(!c){ marker=null; return; }
+  cur=c.s; $('slice').value=cur;
+  marker={col:c.col,row:c.row,s:c.s,w:cellToWorld(c.col,c.row,c.s,view)};
+}
+function studyScrollTop(){
+  if(document.body.classList.contains('mobile')) window.scrollTo(0,0);
+  else document.querySelector('aside').scrollTop=0;
+}
+function showStudyCard(){
+  if(!study) return startStudy();
+  if(!study.queue.length) return finishStudy();
+  studyShow('card');
+  const it=study.cur=study.queue[0];
+  if(it.atlas!==atlas){ atlas=it.atlas; if(ready) applyView(); }
+  study.dir=stDir==='mix'?(Math.random()<0.5?'fwd':'rev'):stDir;
+  study.answered=false; study.revealed=false;
+  const c=cardInfo(it), fwd=study.dir==='fwd', isMC=stFormat==='mc';
+  $('stKicker').textContent=T[LANG][fwd?'st_ask_fwd':'st_ask_rev'];
+  $('stQ').textContent=fwd?c.name:cap(c.func);
+  $('stQ').classList.toggle('isFunc',!fwd);
+  $('stTag').textContent=fwd?c.group:'';
+  $('stFeedback').textContent='';
+  $('stBack').classList.add('hidden'); $('stBack').innerHTML='';
+  $('stReveal').classList.toggle('hidden',isMC);
+  ['stAgain','stKnown','stNext'].forEach(id=>$(id).classList.add('hidden'));
+  const box=$('stOpts'); box.innerHTML='';
+  if(isMC){
+    const correct=fwd?cap(c.func):c.name;
+    const wrong=studyDistractors(it,c,fwd?'func':'name').map(v=>fwd?cap(v):v);
+    shuffle([correct].concat(wrong)).forEach(t=>{
+      const b=document.createElement('button'); b.className='opt'; b.textContent=t;
+      b.onclick=()=>answerStudy(b,t,correct); box.appendChild(b);
+    });
+  }
+  placeStudyMarker(); setOpacity(0); draw();
+  updateStudyStats(); studyScrollTop();
+}
+function renderStudyBack(c){
+  const e=$('stBack'); e.innerHTML='';
+  const add=(cls,txt)=>{ const d=document.createElement('div'); d.className=cls; d.textContent=txt; e.appendChild(d); return d; };
+  add('sbName',c.full+(c.group?' · '+c.group:''));
+  add('sbFunc',cap(c.func));
+  if(c.detail) add('sbDetail',c.detail);
+  if(c.links){ const l=document.createElement('div'); l.className='sbLinks'; l.innerHTML=c.links; e.appendChild(l); }
+  e.classList.remove('hidden');
+}
+function rateStudy(ok){
+  const k=study.cur.k;
+  if(ok){ study.mastered.add(k); deckBox[k]=(deckBox[k]||0)+1; }
+  else{ study.wrongClicks++; study.firstWrong.add(k); deckBox[k]=0; }
+  study.lastOk=ok; saveDeck(); updateStudyStats();
+}
+function answerStudy(btn,val,correct){
+  if(!study||study.answered) return; study.answered=true;
+  const bs=[...document.querySelectorAll('#stOpts .opt')], ok=val===correct, fb=$('stFeedback');
+  bs.forEach(b=>b.disabled=true);
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok) bs.find(b=>b.textContent===correct)?.classList.add('correct');
+  fb.textContent=ok?T[LANG].fb_correct:T[LANG].st_wrong; fb.style.color=ok?'var(--ok)':'var(--bad)';
+  rateStudy(ok);
+  renderStudyBack(cardInfo(study.cur));
+  $('stNext').classList.remove('hidden');
+  setOpacity(0.5); draw();
+  $('stNext').focus({preventScroll:true});
+  $('stNext').scrollIntoView({block:'nearest'});
+}
+function revealStudy(){
+  if(!study||!study.cur||study.revealed) return; study.revealed=true;
+  renderStudyBack(cardInfo(study.cur));
+  $('stReveal').classList.add('hidden');
+  ['stAgain','stKnown'].forEach(id=>$(id).classList.remove('hidden'));
+  setOpacity(0.5); draw();
+  $('stKnown').scrollIntoView({block:'nearest'});
+}
+function advanceStudy(){
+  if(!study||!study.cur) return;
+  const it=study.queue.shift();
+  if(!study.lastOk){ study.queue.splice(Math.min(3,study.queue.length),0,it); }   // falsch -> kommt bald wieder
+  showStudyCard();
+}
+function updateStudyStats(){
+  $('stCorrect').textContent=study.mastered.size;
+  $('stWrong').textContent=study.wrongClicks;
+  $('stLeft').textContent=study.queue.length;
+  $('stBar').style.width=(study.mastered.size/study.total*100)+'%';
+}
+function finishStudy(){
+  study.cur=null; marker=null; studyShow('done');
+  const firstTry=study.total-study.firstWrong.size, pct=Math.round(firstTry/study.total*100);
+  $('stScore').textContent=firstTry+' / '+study.total;
+  $('stVerdict').textContent=pct>=90?T[LANG].v90:pct>=70?T[LANG].v70:pct>=50?T[LANG].v50:T[LANG].v0;
+  $('stRetry').classList.toggle('hidden',!study.firstWrong.size);
+  setOpacity(0.45); draw(); studyScrollTop();
+}
+$('deckList').addEventListener('click',e=>{ const b=e.target.closest('button[data-k]'); if(b) removeFromDeck(b.dataset.k); });
+$('deckAuto').addEventListener('change',e=>{ deckAuto=e.target.checked; saveDeck(); });
+$('deckStudy').addEventListener('click',()=>setMode('study'));
+$('deckBarBtn').addEventListener('click',()=>setMode('study'));
+$('deckClear').addEventListener('click',()=>{ if(!confirm(T[LANG].dk_clear_q)) return; deck=[]; deckBox={}; saveDeck(); renderDeck(); });
+$('deckAll').addEventListener('click',addAllRegions);
+$('expCollect').addEventListener('click',()=>{
+  if(!(lastIdx>0)) return;
+  const k=deckKey(atlas,lastIdx);
+  if(deck.some(d=>d.k===k)){ removeFromDeck(k); return; }
+  const m=emarks[emarks.length-1];
+  addToDeck(atlas,lastIdx,m&&m.idx===lastIdx?m.w:null);
+  renderDeck();
+});
+$('stFormatSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.dataset.f===stFormat) return; stFormat=b.dataset.f; saveDeck(); startStudy(); });
+$('stDirSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.dataset.dir===stDir) return; stDir=b.dataset.dir; saveDeck(); startStudy(); });
+$('stDiffSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.dataset.d===level) return; level=b.dataset.d; applyLevel(); });
+$('stOptToggle').addEventListener('click',()=>{ document.body.classList.toggle('stopts-open'); renderStudySettings(); });
+$('stReveal').addEventListener('click',revealStudy);
+$('stAgain').addEventListener('click',()=>{ rateStudy(false); advanceStudy(); });
+$('stKnown').addEventListener('click',()=>{ rateStudy(true); advanceStudy(); });
+$('stNext').addEventListener('click',advanceStudy);
+$('stRestart').addEventListener('click',()=>startStudy());
+$('stAgainAll').addEventListener('click',()=>startStudy());
+$('stRetry').addEventListener('click',()=>startStudy(deck.filter(d=>study.firstWrong.has(d.k))));
+$('stMore').addEventListener('click',()=>setMode('explore'));
+$('stGoExplore').addEventListener('click',()=>setMode('explore'));
+$('stAll').addEventListener('click',()=>{ addAllRegions(); startStudy(); });
+$('stZoom').addEventListener('click',()=>{ document.body.classList.toggle('study-big'); syncSlice(); positionXhair(); updateSliceTick(); });
+document.addEventListener('keydown',e=>{
+  if(mode!=='study'||!study||!study.cur||e.ctrlKey||e.metaKey||e.altKey) return;
+  const t=e.target;
+  if(t&&t.closest&&(t.closest('input,select,textarea,a')||(t.closest('button')&&!$('stCard').contains(t)))) return;
+  const vis=id=>!$(id).classList.contains('hidden');
+  if(e.key===' '||e.key==='Enter'){
+    if(vis('stReveal')){ e.preventDefault(); revealStudy(); }
+    else if(vis('stNext')){ e.preventDefault(); advanceStudy(); }
+    return;
+  }
+  if(!/^[1-4]$/.test(e.key)) return;
+  if(vis('stKnown')){ if(e.key==='1') $('stAgain').click(); else if(e.key==='2') $('stKnown').click(); return; }
+  const o=document.querySelectorAll('#stOpts .opt')[+e.key-1]; if(o&&!o.disabled) o.click();
+});
+loadDeck();
 
 // init
 function setDevice(){document.body.classList.toggle('mobile', (window.matchMedia&&matchMedia('(pointer:coarse)').matches) || innerWidth<=860);}
@@ -1493,6 +2059,8 @@ if(typeof _S.opacity==='number'){ opacity=_S.opacity; $('opacity').value=Math.ro
 document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.mode===mode));
 $('explorePanel').classList.toggle('hidden',mode!=='explore');
 $('quizPanel').classList.toggle('hidden',mode!=='quiz');
+$('studyPanel').classList.toggle('hidden',mode!=='study');
+syncStudyLayout();
 applyLang(_S.lang||'en');
 applyLevel();
 let grayImgV={}, labImgV={};
