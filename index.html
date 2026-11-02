@@ -743,6 +743,7 @@ function buildOffscreen(){
   cv.width=DW; cv.height=DH;
   ready=true; applyView();
   if(mode==='study'){ placeStudyMarker(); draw(); }
+  else if(mode==='quiz'&&quiz&&quiz.queue.length){ placeQuizMarker(); draw(); }
 }
 // Aktive Ansicht (Sprites, Schicht-Positionen, Repräsentanten, Marker) setzen
 function applyView(){
@@ -768,6 +769,7 @@ function setView(v){
   view=v;
   applyView();                                   // Geometrie/Sprites der neuen Ansicht
   if(mode==='study') placeStudyMarker();
+  else if(mode==='quiz'&&marker) placeQuizMarker(marker.w);
   else if(marker&&marker.w){ const c=worldToCell(marker.w,view); marker.col=c.col;marker.row=c.row;marker.s=c.s; }
   for(const m of emarks){ if(m.w){ const c=worldToCell(m.w,view); m.col=c.col;m.row=c.row;m.s=c.s; } }
   let js=null;
@@ -1451,6 +1453,15 @@ function optionsFor(type,correct){
   shuffle(pool);
   return shuffle([correct,...pool.slice(0,3)]);
 }
+// Fadenkreuz auf die gefragte Region: rep (bzw. die Projektion von w) trifft sie nicht immer,
+// bei beidseitigen Labels liegt der Schwerpunkt oft auf der Mittellinie
+function placeQuizMarker(w){
+  const isQ=j=>j===quiz.current;
+  let c=w?worldToCell(w,view):A().rep[quiz.current];
+  if(ready&&!(c&&onRegion(atlas,c,isQ))) c=regionCell(atlas,isQ,w)||c;
+  cur=c.s; $('slice').value=cur;
+  marker={col:c.col,row:c.row,s:c.s,w:cellToWorld(c.col,c.row,c.s,view)};
+}
 function nextQ(){
   $('qFeedback').textContent='';
   $('qExplain').classList.add('hidden'); $('qExplain').innerHTML='';
@@ -1463,8 +1474,8 @@ function nextQ(){
   if(item.atlas && item.atlas!==atlas){ atlas=item.atlas; _ch=true; }
   if(qViewMode==='random'){ const vs=['axial','coronal','sagittal']; view=vs[Math.floor(Math.random()*vs.length)]; _ch=true; }
   if(_ch) applyView();
-  const def=TYPES[quiz.curType], r=A().rep[i];
-  cur=r.s; $('slice').value=cur; marker={col:r.col,row:r.row,s:r.s,w:cellToWorld(r.col,r.row,r.s,view)}; setOpacity(0); draw();
+  const def=TYPES[quiz.curType];
+  placeQuizMarker(); setOpacity(0); draw();
   $('qPrompt').textContent=T[LANG].q_marked;
   $('qInstr').textContent=def.ask(i);
   const box=$('qOpts'); box.innerHTML='';
@@ -1871,15 +1882,19 @@ function startStudy(items){
   study={items:deck.slice(),queue,total:queue.length,mastered:new Set(),firstWrong:new Set(),wrongClicks:0,cur:null,dir:'fwd',answered:false,revealed:false,lastOk:false};
   showStudyCard();
 }
-// Punkt sicher in der Region: nächster Regionspixel zur Klickstelle, ohne Klickstelle die Mitte der größten Schicht.
+function onRegion(a,c,test){
+  const [sx,sy]=srcXY(c.s);
+  return test(labV[a][view].getImageData(sx+c.col,sy+c.row,1,1).data[0]);
+}
+// Punkt sicher in der Region: nächster Regionspixel zu w, ohne w der tiefste Punkt der größten Schicht.
 // (Die rep-Punkte taugen hier nicht: bei beidseitigen Labels liegt ihr Schwerpunkt oft auf der Mittellinie.)
-function regionCell(it){
+function regionCell(a,test,w){
   const o=ORIENT[view], f=FOV[view], mm=Math.abs(f.h[1]-f.h[0])/cellW, mask=new Uint8Array(256);
-  for(let i=1;i<256;i++) mask[i]=deckKey(it.atlas,i)===it.k?1:0;
-  const lc=labV[it.atlas][view], img=lc.getImageData(0,0,lc.canvas.width,lc.canvas.height), d=img.data, W=img.width;
+  for(let i=1;i<256;i++) mask[i]=test(i)?1:0;
+  const lc=labV[a][view], img=lc.getImageData(0,0,lc.canvas.width,lc.canvas.height), d=img.data, W=img.width;
   const each=(s,fn)=>{ const [sx,sy]=srcXY(s);
     for(let row=0;row<cellH;row++) for(let col=0;col<cellW;col++) if(mask[d[((sy+row)*W+sx+col)*4]]) fn(col,row); };
-  const t=it.w?worldToCell(it.w,view):null;
+  const t=w?worldToCell(w,view):null;
   let best=null, bd=Infinity;
   if(t){
     for(let s=0;s<o.n;s++){ const dz=o.sliceMM[s]-o.sliceMM[t.s];
@@ -1889,21 +1904,23 @@ function regionCell(it){
   let big=-1, bigN=0;
   for(let s=0;s<o.n;s++){ let c=0; each(s,()=>c++); if(c>bigN){ bigN=c; big=s; } }
   if(big<0) return null;
-  // Beidseitige Regionen: Mitte der volleren Bildhälfte, sonst läge sie zwischen den Hemisphären
-  const half=[{n:0,x:0,y:0},{n:0,x:0,y:0}];
-  each(big,(col,row)=>{ const h=half[col<cellW/2?0:1]; h.n++; h.x+=col; h.y+=row; });
-  const h=half[0].n>=half[1].n?half[0]:half[1], cx=h.x/h.n, cy=h.y/h.n;
-  each(big,(col,row)=>{ const q=(col-cx)**2+(row-cy)**2; if(q<bd){ bd=q; best={col,row,s:big}; } });
+  // Tiefster Punkt der Region (größter Abstand zum Rand): liegt auch bei beidseitigen oder gebogenen Regionen sicher darin
+  const W2=cellW+2, D=new Uint16Array(W2*(cellH+2));
+  each(big,(col,row)=>{ D[(row+1)*W2+col+1]=1; });
+  for(let p=W2;p<D.length-W2;p++) if(D[p]) D[p]=Math.min(D[p-1],D[p-W2])+1;
+  let deep=0;
+  for(let p=D.length-W2-1;p>=W2;p--) if(D[p]){
+    D[p]=Math.min(D[p],D[p+1]+1,D[p+W2]+1);
+    if(D[p]>deep){ deep=D[p]; best={col:p%W2-1,row:Math.floor(p/W2)-1,s:big}; }
+  }
   return best;
 }
 // Marker an der eigenen Klickstelle; fällt die Projektion in eine andere Ansicht neben die Region -> regionCell
 function placeStudyMarker(){
   const it=study&&study.cur; if(!it){ marker=null; return; }
+  const inCard=i=>deckKey(it.atlas,i)===it.k;
   let c=it.w?worldToCell(it.w,view):null;
-  if(ready){
-    const onRegion=c&&(()=>{ const [sx,sy]=srcXY(c.s); return deckKey(it.atlas,labV[it.atlas][view].getImageData(sx+c.col,sy+c.row,1,1).data[0])===it.k; })();
-    if(!onRegion) c=regionCell(it)||c;
-  }
+  if(ready&&!(c&&onRegion(it.atlas,c,inCard))) c=regionCell(it.atlas,inCard,it.w)||c;
   if(!c){ marker=null; return; }
   cur=c.s; $('slice').value=cur;
   marker={col:c.col,row:c.row,s:c.s,w:cellToWorld(c.col,c.row,c.s,view)};
