@@ -51,3 +51,9 @@
 
 *Keine Rechtsberatung. Stand: Juni 2026 — Lizenzbedingungen können sich ändern;
 im Zweifel die verlinkten Originalquellen prüfen.*
+
+## 6. Normvolumen-Seite (`norms.html`)
+- **Daten:** Dallas Lifespan Brain Study (DLBS), OpenNeuro ds004856 — **CC0** —
+  https://openneuro.org/datasets/ds004856 ; Zitat: Park D.C. et al. *Sci Data* 12:846, 2025 (doi:10.1038/s41597-025-04847-7).
+- Auf der Seite stehen nur Mediane und Quartile je Struktur (keine Bilder, keine Einzelpersonen),
+  berechnet mit SynthSeg 2.0 (FreeSurfer 8.2.0, `mri_synthseg --parc --robust`).

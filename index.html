@@ -138,6 +138,7 @@
   .done .score{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;color:var(--accent)}
   footer{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-align:center;padding:10px 16px;border-top:1px solid var(--line);letter-spacing:.02em;line-height:1.6;max-width:980px;margin:0 auto}
   footer b{color:var(--ink);letter-spacing:.1em}
+  footer a{color:var(--accent2)}
   #expInfo{color:var(--muted);font-size:14px;line-height:1.5;margin-top:8px;font-style:italic}
   #exHint{border:0;background:none;padding:10px 2px 0;margin-top:8px;border-top:1px solid var(--line);
     font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.55;color:var(--muted);letter-spacing:.02em}
@@ -574,7 +575,7 @@ const T={
    st_wrong:'✗ Falsch – kommt gleich nochmal',st_retry:'Nur Fehler üben',st_restart:'Neu starten',st_more:'＋ Mehr sammeln',st_goto:'Zum Erkunden',
    st_empty_k:'Lernen · noch leer',st_empty:'Noch nichts gesammelt. Klick im Modus „Erkunden" auf Hirnregionen – sie landen automatisch in deiner Sammlung.',
    st_keys_mc:'Tastatur: 1–4 = Antwort · Leertaste = weiter',st_keys_cards:'Tastatur: Leertaste = umdrehen · 1 = Nochmal · 2 = Gewusst',
-   footer_html:'<b>Quellen</b> — Atlanten: AAL (Automated Anatomical Labeling, Tzourio-Mazoyer et al., NeuroImage 2002) und Harvard-Oxford (Desikan et al. 2006; Makris et al. 2006), Teil von FSL – FMRIB Software Library (fsl.fmrib.ox.ac.uk). MRT-Vorlage: MNI152 (ICBM 152, nonlinear 2009). Bilddaten via NiiVue/GitHub, in Python zu Slices vorgerendert und auf die Hirnmaske beschnitten.'},
+   footer_html:'<b>Quellen</b> — Atlanten: AAL (Automated Anatomical Labeling, Tzourio-Mazoyer et al., NeuroImage 2002) und Harvard-Oxford (Desikan et al. 2006; Makris et al. 2006), Teil von FSL – FMRIB Software Library (fsl.fmrib.ox.ac.uk). MRT-Vorlage: MNI152 (ICBM 152, nonlinear 2009). Bilddaten via NiiVue/GitHub, in Python zu Slices vorgerendert und auf die Hirnmaske beschnitten. <a href="norms.html">Normale Hirnvolumen (Frauen/Männer, SynthSeg) →</a>'},
  en:{sub:'MNI152 · AAL & Harvard-Oxford · pre-rendered',m_explore:'Explore',m_quiz:'Quiz',
    tb_slice:'Slice',tb_atlas:'Opacity',sliceWord:'Slice',
    ex_kicker:'Explore · click the MRI',ex_name0:'Click a region',
@@ -607,7 +608,7 @@ const T={
    st_wrong:'✗ Wrong – will come back soon',st_retry:'Practise mistakes only',st_restart:'Restart',st_more:'＋ Collect more',st_goto:'Go to Explore',
    st_empty_k:'Study · still empty',st_empty:'Nothing collected yet. Click brain regions in Explore mode – they land in your collection automatically.',
    st_keys_mc:'Keyboard: 1–4 = answer · Space = next',st_keys_cards:'Keyboard: Space = flip · 1 = Again · 2 = Knew it',
-   footer_html:'<b>Sources</b> — Atlases: AAL (Automated Anatomical Labeling, Tzourio-Mazoyer et al., NeuroImage 2002) and Harvard-Oxford (Desikan et al. 2006; Makris et al. 2006), part of FSL – FMRIB Software Library (fsl.fmrib.ox.ac.uk). MRI template: MNI152 (ICBM 152, nonlinear 2009). Image data via NiiVue/GitHub, pre-rendered to slices in Python and clipped to the brain mask.'}
+   footer_html:'<b>Sources</b> — Atlases: AAL (Automated Anatomical Labeling, Tzourio-Mazoyer et al., NeuroImage 2002) and Harvard-Oxford (Desikan et al. 2006; Makris et al. 2006), part of FSL – FMRIB Software Library (fsl.fmrib.ox.ac.uk). MRI template: MNI152 (ICBM 152, nonlinear 2009). Image data via NiiVue/GitHub, pre-rendered to slices in Python and clipped to the brain mask. <a href="norms.html">Normal brain volumes (women/men, SynthSeg) →</a>'}
 };
 
 function humanize(lab){
